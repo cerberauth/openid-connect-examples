@@ -59,7 +59,7 @@ export const useAuth = () => {
     }
 
     console.log('store code_verifier and nonce in the end-user session')
-    localStorage.setItem(webStorageKey, JSON.stringify({ code_verifier, nonce, redirectUri }))
+    sessionStorage.setItem(webStorageKey, JSON.stringify({ code_verifier, nonce, redirectUri }))
 
     console.log('Redirect to Authorization Server', authorizationUrl.toString())
     window.location.assign(authorizationUrl.toString())
@@ -72,12 +72,12 @@ export const useAuth = () => {
 
     setHandlingRedirect(true)
 
-    const storage = localStorage.getItem(webStorageKey)
+    const storage = sessionStorage.getItem(webStorageKey)
     if (!storage) {
       console.error('No stored code_verifier and nonce found')
       return
     }
-    localStorage.removeItem(webStorageKey)
+    sessionStorage.removeItem(webStorageKey)
     const { code_verifier, nonce, redirectUri } = JSON.parse(storage)
 
     let sub: string
