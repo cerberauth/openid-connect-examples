@@ -1,0 +1,74 @@
+version: '3.7'
+
+services:
+  hydra:
+    image: oryd/hydra:v2.2
+    command: serve public -c /etc/config/hydra/hydra.yml --sqa-opt-out --dev
+    volumes:
+      - .docker/hydra:/etc/config/hydra:ro
+    environment:
+      - DSN=postgres://hydra:secret@hydra-postgresd:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+    restart: unless-stopped
+    ports:
+      - 4444:4444
+    depends_on:
+      - hydra-migrate
+      - hydra-postgresd
+
+  hydra-admin:
+    image: oryd/hydra:v2.2
+    hostname: hydra-admin
+    command: serve admin -c /etc/config/hydra/hydra.yml --sqa-opt-out --dev
+    volumes:
+      - .docker/hydra:/etc/config/hydra:ro
+    environment:
+      - DSN=postgres://hydra:secret@hydra-postgresd:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+    restart: unless-stopped
+    ports:
+      - 4445:4445
+    depends_on:
+      - hydra-migrate
+      - hydra-postgresd
+
+  hydra-migrate:
+    image: oryd/hydra:v2.2
+    depends_on:
+      - hydra-postgresd
+    environment:
+      - DSN=postgres://hydra:secret@hydra-postgresd:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+    command: migrate -c /etc/config/hydra/hydra.yml sql -e --yes
+    volumes:
+      - .docker/hydra:/etc/config/hydra:ro
+    restart: on-failure
+
+  hydra-postgresd:
+    image: postgres:16
+    restart: always
+    volumes:
+      - hdyra_db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=hydra
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  hydra-login-consent:
+    build:
+      context: ./hydra-login-consent
+    environment:
+      - HYDRA_ADMIN_URL=http://hydra-admin:4445
+      - HYDRA_PUBLIC_URL=http://hydra:4444
+      - PORT=8080
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    depends_on:
+      - hydra
+      - hydra-admin
+
+volumes:
+  hdyra_db_data:
