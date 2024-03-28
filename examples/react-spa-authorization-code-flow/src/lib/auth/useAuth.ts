@@ -17,6 +17,7 @@ export const useAuth = () => {
 
   const login = async (params?: LoginParams) => {
     if (!as) {
+      console.error('Authorization Server is not available')
       return
     }
 
@@ -67,6 +68,7 @@ export const useAuth = () => {
 
   const handleLoginRedirect = async () => {
     if (!as || !client || isHandlingRedirect) {
+      console.error('Authorization Server or Client is not available')
       return
     }
 
