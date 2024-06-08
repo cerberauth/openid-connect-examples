@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  baffao:
+    image: cerberauth/baffao
+    ports:
+      - "3000:3000"
+    environment:
+      - BAFFAO__SERVER__HOST=0.0.0.0
+      - BAFFAO__SERVER__PORT=3000
+    env_file:
+      - .env
+      - .env.local

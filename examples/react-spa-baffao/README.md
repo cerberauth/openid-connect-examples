@@ -22,7 +22,7 @@ Before getting started, make sure you have the following:
 2. Install the dependencies:
 
   ```bash
-  cd openid-connect-examples/react-spa-authorization-code-flow
+  cd openid-connect-examples/react-spa-baffao
   npm ci
   ```
 
@@ -60,7 +60,5 @@ Before getting started, make sure you have the following:
 ## Additional Resources
 
 - [OpenID Connect](https://openid.net/)
-- [OAuth 2.0 Authorization Code Flow](https://oauth.net/2/grant-types/authorization-code/)
-- [PKCE](https://oauth.net/2/pkce/)
-- [Awesome OpenID Connect](https://github.com/cerberauth/awesome-openid-connect)
+- [Baffao](https://github.com/cerberauth/baffao)
 - [React](https://reactjs.org/)
