@@ -12,7 +12,7 @@ type LoginParams = {
 }
 
 export const useAuth = () => {
-  const { setAccessToken, setIdToken, setUser, client, user, as } = useContext(AuthContext)
+  const { setAccessToken, idToken, setIdToken, setUser, client, user, as } = useContext(AuthContext)
   const [isHandlingRedirect, setHandlingRedirect] = useState(false)
 
   const login = async (params?: LoginParams) => {
@@ -39,6 +39,7 @@ export const useAuth = () => {
      */
     const code_verifier = oauth.generateRandomCodeVerifier()
     const code_challenge = await oauth.calculatePKCECodeChallenge(code_verifier)
+    let state: string | undefined
     let nonce: string | undefined
 
     const authorizationUrl = new URL(as.authorization_endpoint!)
@@ -49,17 +50,14 @@ export const useAuth = () => {
     authorizationUrl.searchParams.set('code_challenge', code_challenge)
     authorizationUrl.searchParams.set('code_challenge_method', code_challenge_method)
 
-    /**
-     * We cannot be sure the AS supports PKCE so we're going to use nonce too. Use of PKCE is
-     * backwards compatible even if the AS doesn't support it which is why we're using it regardless.
-     */
-    if (as.code_challenge_methods_supported?.includes('S256') !== true) {
-      nonce = oauth.generateRandomNonce()
-      authorizationUrl.searchParams.set('nonce', nonce)
-    }
+    state = oauth.generateRandomState()
+    authorizationUrl.searchParams.set('state', state)
+
+    nonce = oauth.generateRandomNonce()
+    authorizationUrl.searchParams.set('nonce', nonce)
 
     console.log('store code_verifier and nonce in the end-user session')
-    sessionStorage.setItem(webStorageKey, JSON.stringify({ code_verifier, nonce, redirectUri }))
+    sessionStorage.setItem(webStorageKey, JSON.stringify({ code_verifier, state, nonce, redirectUri }))
 
     console.log('Redirect to Authorization Server', authorizationUrl.toString())
     window.location.assign(authorizationUrl.toString())
@@ -78,14 +76,14 @@ export const useAuth = () => {
       return
     }
     sessionStorage.removeItem(webStorageKey)
-    const { code_verifier, nonce, redirectUri } = JSON.parse(storage)
+    const { code_verifier, state, nonce, redirectUri } = JSON.parse(storage)
 
     let sub: string
     let accessToken: string
 
     // @ts-expect-error
     const currentUrl: URL = new URL(window.location)
-    const params = oauth.validateAuthResponse(as, client, currentUrl)
+    const params = oauth.validateAuthResponse(as, client, currentUrl, state)
     if (oauth.isOAuth2Error(params)) {
       console.error('Error Response', params)
       setHandlingRedirect(false)
@@ -143,9 +141,20 @@ export const useAuth = () => {
   }
 
   const logout = () => {
+    if (!as || !idToken) {
+      return
+    }
+
+    const endSessionUrl = new URL(as.end_session_endpoint!)
+    endSessionUrl.searchParams.set('post_logout_redirect_uri', window.location.origin)
+    endSessionUrl.searchParams.set('id_token_hint', idToken)
+    console.log('Redirect to End Session Endpoint', endSessionUrl.toString())
+
     setAccessToken(undefined)
     setIdToken(undefined)
     setUser(undefined)
+
+    window.location.assign(endSessionUrl.toString())
   }
 
   useEffect(() => {
