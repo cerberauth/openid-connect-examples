@@ -4,7 +4,8 @@ This repository contains a collection of OpenID Connect examples and demos.
 
 ## Examples
 
-- [React SPA (Single Page App) using Authorization Code Flow with PKCE](./react-spa-authorization-code-flow)
+- [Angular SPA](./examples/angular-spa/README.md)
+- [React SPA](./examples/react-spa/README.md)
 
 ## License
 
