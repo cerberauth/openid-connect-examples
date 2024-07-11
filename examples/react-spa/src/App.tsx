@@ -1,7 +1,6 @@
 import { Router } from 'wouter'
 
 import { AuthProvider } from './lib/auth/AuthProvider'
-import { Header } from './components/Header'
 import { PageRouter } from './components/PageRouter'
 
 function App() {
@@ -11,13 +10,7 @@ function App() {
       clientId={import.meta.env.VITE_OIDC_CLIENT_ID}
     >
       <Router>
-        <main role="main" className="wrapper">
-          <div className="content">
-            <Header />
-
-            <PageRouter />
-          </div>
-        </main>
+        <PageRouter />
       </Router>
     </AuthProvider>
   )

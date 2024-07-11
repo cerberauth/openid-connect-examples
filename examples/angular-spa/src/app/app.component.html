@@ -1,23 +1,40 @@
 <style></style>
 
 <main class="main">
-  <div *ngIf="idToken">
-    <div style="text-align:center">
-      <h1>Welcome to {{ title }}!</h1>
-    </div>
+  <div class="bg-slate-100 min-h-screen">
+    <main role="main"
+      class="flex flex-col items-center justify-center h-5/6 space-y-8 text-center px-4 py-16 lg:pt-32 md:pt-16 sm:pt-8">
+      <h1 class="mt-4 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-5xl xl:max-w-[43.5rem]">
+        Angular SPA Example using OpenID Connect
+      </h1>
+      <p class="mt-4 max-w-lg text-lg text-slate-700">
+        This example demonstrates how to authenticate users in a Angular Single Page Application (SPA) using OpenID
+        Connect Protocol.
+      </p>
 
-    <h2>User</h2>
-    <p>{{ userName }}</p>
+      <button *ngIf="user; else loginButton" (click)="logout()"
+        class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700">
+        Logout
+      </button>
+      <ng-template #loginButton>
+        <button (click)="login()"
+          class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700">
+          Login with TestID
+        </button>
+      </ng-template>
 
-    <h2>Id-Token</h2>
-    <p>{{ idToken }}</p>
+      <p class="mt-4 max-w-lg text-slate-700">
+        If you want to checkout out how to implement OpenID Connect in your Angular SPA, take a look at the <a
+          class="text-indigo-600"
+          href="https://github.com/cerberauth/openid-connect-examples/tree/main/examples/angular-spa">source code</a>.
+      </p>
+    </main>
 
-    <h2>Access Token</h2>
-    <p>{{ accessToken }}</p>
-
-    <p>
-      <button (click)="refresh()">Refresh</button>
-    </p>
+    <footer class="text-center py-4">
+      <p class="text-sm text-gray-500">
+        Proudly part of <a class="text-indigo-600" href="https://www.cerberauth.com">CerberAuth</a> community.
+      </p>
+    </footer>
   </div>
 </main>
 

@@ -18,33 +18,23 @@ export class AppComponent {
 
   constructor(private oauthService: OAuthService) {
     this.oauthService.configure(environment.auth);
-    this.oauthService.loadDiscoveryDocumentAndLogin({ customHashFragment: window.location.search });
-
     this.oauthService.setupAutomaticSilentRefresh();
+    this.oauthService.loadDiscoveryDocumentAndTryLogin({ customHashFragment: window.location.search });
 
     this.oauthService.events
       .pipe(filter((e) => e.type === 'token_received'))
       .subscribe((_) => this.oauthService.loadUserProfile());
   }
 
-  get userName(): string | null {
-    const claims = this.oauthService.getIdentityClaims();
-    if (!claims) {
-      return null;
-    }
-
-    return claims['name'];
+  login() {
+    this.oauthService.initLoginFlow();
   }
 
-  get idToken(): string {
-    return this.oauthService.getIdToken();
+  logout() {
+    this.oauthService.logOut();
   }
 
-  get accessToken(): string {
-    return this.oauthService.getAccessToken();
-  }
-
-  refresh() {
-    this.oauthService.refreshToken();
+  get user() {
+    return this.oauthService.getIdentityClaims();
   }
 }
