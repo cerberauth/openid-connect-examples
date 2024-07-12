@@ -1,0 +1,61 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  OIDC_ISSUER: "https://testid.cerberauth.com"
+
+jobs:
+  deploy-nodejs-cloudflare:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ matrix.workingDirectory }}
+
+    strategy:
+      matrix:
+        include:
+          - workingDirectory: ./examples/react-spa
+            projectName: cerberauth-react-spa-oidc
+            directory: ./dist
+          - workingDirectory: ./examples/angular-spa
+            projectName: cerberauth-angular-spa-oidc
+            directory: ./dist/angular-spa/browser
+
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v4
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: '${{ matrix.workingDirectory }}/package-lock.json'
+
+      - name: Install dependencies 👨🏻‍💻
+        run: npm ci
+
+      - name: Run build
+        run: npm run build
+
+      - name: Publish
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ matrix.projectName }}
+          directory: ${{ matrix.workingDirectory }}/${{ matrix.directory }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

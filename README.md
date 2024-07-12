@@ -1,6 +1,6 @@
 # OpenID Connect Examples / Demo
 
-This repository contains a collection of OpenID Connect examples and demos.
+This repository contains a collection of OpenID Connect examples.
 
 ## Examples
 

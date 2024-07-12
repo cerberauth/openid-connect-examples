@@ -4,6 +4,10 @@ This project demonstrates how to implement the Authorization Code Flow with PKCE
 
 Disclaimer: This project is for educational purposes only and should not be used in production without proper security review and testing.
 
+## Deployment
+
+This project is deployed on Cloudflare Pages. You can access the live demo [here](https://cerberauth-react-spa-oidc.pages.dev/).
+
 ## Prerequisites
 
 Before getting started, make sure you have the following:
@@ -22,11 +26,13 @@ Before getting started, make sure you have the following:
 2. Install the dependencies:
 
   ```bash
-  cd openid-connect-examples/react-spa-authorization-code-flow
-  npm install
+  cd openid-connect-examples/react-spa
+  npm ci
   ```
 
 3. Configure the OpenID Connect provider:
+
+If you don't have an OpenID Connect provider, you can use [TestID OpenID Connect Provider](https://testid.cerberauth.com/).
 
   - Obtain the client ID and client secret from your OpenID Connect provider.
   - Register the redirect URI for your React SPA in the provider's developer console.
@@ -59,6 +65,7 @@ Before getting started, make sure you have the following:
 
 ## Additional Resources
 
+- [oauth4webapi](https://github.com/panva/oauth4webapi)
 - [OpenID Connect](https://openid.net/)
 - [OAuth 2.0 Authorization Code Flow](https://oauth.net/2/grant-types/authorization-code/)
 - [PKCE](https://oauth.net/2/pkce/)
