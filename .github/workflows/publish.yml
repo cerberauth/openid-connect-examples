@@ -31,7 +31,7 @@ jobs:
             directory: ./dist/angular-spa/browser
           - workingDirectory: ./examples/nextjs-app
             projectName: cerberauth-nextjs-app-oidc
-            directory: ./
+            directory: ./.vercel/output/static
 
     permissions:
       contents: read
@@ -52,7 +52,7 @@ jobs:
         run: npm ci
 
       - name: Run build
-        run: npm run build
+        run: npm run pages:build
 
       - name: Publish
         uses: cloudflare/pages-action@1
