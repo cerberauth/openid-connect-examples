@@ -29,6 +29,9 @@ jobs:
           - workingDirectory: ./examples/angular-spa
             projectName: cerberauth-angular-spa-oidc
             directory: ./dist/angular-spa/browser
+          - workingDirectory: ./examples/nextjs-app
+            projectName: cerberauth-nextjs-app-oidc
+            directory: ./
 
     permissions:
       contents: read
