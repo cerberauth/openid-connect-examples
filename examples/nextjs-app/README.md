@@ -1,4 +1,4 @@
-# React SPA (Single Page App) using Authorization Code Flow with PKCE
+# Next.js App using Authorization Code Flow with PKCE
 
 This project demonstrates how to implement the Authorization Code Flow with PKCE for a Next.js App.
 
@@ -35,7 +35,7 @@ Before getting started, make sure you have the following:
 If you don't have an OpenID Connect provider, you can use [TestID OpenID Connect Provider](https://testid.cerberauth.com/).
 
   - Obtain the client ID and client secret from your OpenID Connect provider.
-  - Register the redirect URI for your React SPA in the provider's developer console.
+  - Register the redirect URI for your Next.js App in the provider's developer console.
 
 4. Update the configuration:
 
@@ -70,7 +70,7 @@ If you don't have an OpenID Connect provider, you can use [TestID OpenID Connect
 
 7. Click on the "Login" button to initiate the authorization code flow.
 
-8. After successful authentication, you will be redirected back to the React SPA and the user information will be displayed.
+8. After successful authentication, you will be redirected back to the application and the user information will be displayed.
 
 ## Additional Resources
 
@@ -79,4 +79,5 @@ If you don't have an OpenID Connect provider, you can use [TestID OpenID Connect
 - [OAuth 2.0 Authorization Code Flow](https://oauth.net/2/grant-types/authorization-code/)
 - [PKCE](https://oauth.net/2/pkce/)
 - [Awesome OpenID Connect](https://github.com/cerberauth/awesome-openid-connect)
+- [Next.js](https://nextjs.org/)
 - [React](https://reactjs.org/)
