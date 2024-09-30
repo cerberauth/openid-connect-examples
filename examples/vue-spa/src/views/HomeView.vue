@@ -1,9 +1,7 @@
 <script setup>
-const auth = useAuth()
+import { useAuth } from '@/lib/auth'
 
-function login() {
-  auth.oauth2("testid", {})
-}
+const { isAuthenticated, login, logout } = useAuth()
 </script>
 
 <template>
@@ -11,21 +9,21 @@ function login() {
     <main role="main"
       class="flex flex-col items-center justify-center h-5/6 space-y-8 text-center px-4 py-16 lg:pt-32 md:pt-16 sm:pt-8">
       <h1 class="mt-4 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-5xl xl:max-w-[43.5rem]">
-        Nuxt Application Example using OpenID Connect
+        Vue.js Application Example using OpenID Connect
       </h1>
       <p class="mt-4 max-w-lg text-lg text-slate-700">
-        This example demonstrates how to authenticate users in a Nuxt Application using OpenID Connect Protocol.
+        This example demonstrates how to authenticate users in a Vue Application using OpenID Connect Protocol.
       </p>
-      <Button v-if="loggedIn" @click="clear">
+      <button class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700" v-if="isAuthenticated" @click="logout">
         Logout
-      </Button>
-      <Button v-else @click="login">
+      </button>
+      <button class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700" v-else @click="login">
         Login with TestID
-      </Button>
+      </button>
       <p class="mt-4 max-w-lg text-slate-700">
-        If you want to checkout out how to implement OpenID Connect in your Nuxt Application, take a look at the <a
+        If you want to checkout out how to implement OpenID Connect in your Vue Application, take a look at the <a
           class="text-indigo-600"
-          href="https://github.com/cerberauth/openid-connect-examples/tree/main/examples/nuxt-app">source code</a>.
+          href="https://github.com/cerberauth/openid-connect-examples/tree/main/examples/vue-app">source code</a>.
       </p>
     </main>
 

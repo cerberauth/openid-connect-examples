@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
+    "pages:build": "vite build --mode production",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
@@ -13,8 +14,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "oauth4webapi": "^3.0.0",
     "vue": "^3.4.29",
-    "vue-auth3": "^1.0.10",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
