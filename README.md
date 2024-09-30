@@ -12,4 +12,4 @@ You can use the examples as a starting point for your own project or as a refere
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./README.md) file for details.
+This project is licensed under the Creative Commons Zero v1.0 Universal license. See the [LICENSE](./LICENSE) file for more information.
