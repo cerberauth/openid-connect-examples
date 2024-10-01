@@ -9,6 +9,7 @@ You can use the examples as a starting point for your own project or as a refere
 - [Angular SPA](./examples/angular-spa/README.md)
 - [Next.js Application](./examples/nextjs-app/README.md)
 - [React SPA](./examples/react-spa/README.md)
+- [Hono](./examples/hono/README.md)
 
 ## License
 

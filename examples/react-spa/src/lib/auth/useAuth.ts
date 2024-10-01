@@ -7,8 +7,8 @@ import { AuthContext } from './context'
 const webStorageKey = 'oidc:auth'
 
 type LoginParams = {
-  scope?: string;
-  redirectUri?: string;
+  scope?: string
+  redirectUri?: string
 }
 
 export const useAuth = () => {
