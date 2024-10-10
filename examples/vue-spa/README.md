@@ -1,39 +1,73 @@
-# vue-spa
+# Vue SPA (Single Page App) using Authorization Code Flow with PKCE
 
-This template should help get you started developing with Vue 3 in Vite.
+This project demonstrates how to implement the Authorization Code Flow with PKCE for a Vue SPA.
 
-## Recommended IDE Setup
+Disclaimer: This project is for educational purposes only and should not be used in production without proper security review and testing.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Deployment
 
-## Type Support for `.vue` Imports in TS
+This project is deployed on Cloudflare Pages. You can access the live demo [here](https://cerberauth-vue-spa-oidc.pages.dev/).
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Prerequisites
 
-## Customize configuration
+Before getting started, make sure you have the following:
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Node.js installed on your machine
+- An OpenID Connect provider that supports the Authorization Code Flow with PKCE
 
-## Project Setup
+## Getting Started
 
-```sh
-npm install
-```
+1. Clone the repository:
 
-### Compile and Hot-Reload for Development
+  ```bash
+  git clone https://github.com/cerberauth/openid-connect-examples.git
+  ```
 
-```sh
-npm run dev
-```
+2. Install the dependencies:
 
-### Type-Check, Compile and Minify for Production
+  ```bash
+  cd openid-connect-examples/vue-spa
+  npm ci
+  ```
 
-```sh
-npm run build
-```
+3. Configure the OpenID Connect provider:
 
-### Lint with [ESLint](https://eslint.org/)
+If you don't have an OpenID Connect provider, you can use [TestID OpenID Connect Provider](https://testid.cerberauth.com/).
 
-```sh
-npm run lint
-```
+  - Obtain the client ID and client secret from your OpenID Connect provider.
+  - Register the redirect URI for your Vue SPA in the provider's developer console.
+
+4. Update the configuration:
+
+  - Create a `.env.local` file in the root directory of your project or copy `.env` file.
+  - Add the necessary environment variables to the `.env.local` file. For example:
+
+    ```plaintext
+    VITE_CLIENT_ID=your-client-id
+    VITE_REDIRECT_URI=http://localhost:3000/callback
+    ```
+
+    Replace `your-client-id`, and `http://localhost:5173/callback` with the actual values provided by your OpenID Connect provider.
+
+  - Save the `.env.local` file.
+
+5. Start the development server:
+
+  ```bash
+  npm run dev
+  ```
+
+6. Open your browser and navigate to `http://localhost:5173/`.
+
+7. Click on the "Login" button to initiate the authorization code flow.
+
+8. After successful authentication, you will be redirected back to the Vue SPA and the user information will be displayed.
+
+## Additional Resources
+
+- [oauth4webapi](https://github.com/panva/oauth4webapi)
+- [OpenID Connect](https://openid.net/)
+- [OAuth 2.0 Authorization Code Flow](https://oauth.net/2/grant-types/authorization-code/)
+- [PKCE](https://oauth.net/2/pkce/)
+- [Awesome OpenID Connect](https://github.com/cerberauth/awesome-openid-connect)
+- [Vue.js](https://vuejs.org/)
