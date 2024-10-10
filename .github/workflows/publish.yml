@@ -26,6 +26,9 @@ jobs:
           - workingDirectory: ./examples/react-spa
             projectName: cerberauth-react-spa-oidc
             directory: ./dist
+          - workingDirectory: ./examples/vue-spa
+            projectName: cerberauth-vue-spa-oidc
+            directory: ./dist
           - workingDirectory: ./examples/angular-spa
             projectName: cerberauth-angular-spa-oidc
             directory: ./dist/angular-spa/browser
