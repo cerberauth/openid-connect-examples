@@ -1,4 +1,4 @@
-FROM node:20 as builder
+FROM node:lts AS builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ ENV NEXT_BUILD_OUTPUT 'standalone'
 
 RUN npm run build
 
-FROM node:20-alpine
+FROM node:lts-alpine
 
 WORKDIR /app
 
