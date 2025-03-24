@@ -1,4 +1,4 @@
-FROM node:lts AS development
+FROM node:jod AS development
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ ENV PORT=3000
 
 CMD [ "npm", "start" ]
 
-FROM development as builder
+FROM development AS builder
 
 RUN npm run build
 
