@@ -1,4 +1,4 @@
-FROM node:lts AS builder
+FROM node:jod AS builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ ENV NEXT_BUILD_OUTPUT 'standalone'
 
 RUN npm run build
 
-FROM node:lts-alpine
+FROM node:jod-alpine
 
 WORKDIR /app
 
