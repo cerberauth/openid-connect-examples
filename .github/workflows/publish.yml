@@ -18,6 +18,7 @@ jobs:
         working-directory: ${{ matrix.workingDirectory }}
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - workingDirectory: ./examples/react-spa

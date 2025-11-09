@@ -29,6 +29,7 @@ jobs:
       packages: write
 
     strategy:
+      fail-fast: false
       matrix:
         example: ${{ fromJson(needs.list-examples.outputs.matrix) }}
 
