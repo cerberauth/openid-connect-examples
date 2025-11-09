@@ -81,7 +81,7 @@ jobs:
         include:
           - workingDirectory: ./examples/react-spa
             projectName: cerberauth-react-spa-oidc
-            directory: ./dist
+            directory: ./dist/client
           - workingDirectory: ./examples/vue-spa
             projectName: cerberauth-vue-spa-oidc
             directory: ./dist
