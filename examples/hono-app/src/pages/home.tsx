@@ -19,7 +19,7 @@ export const HomePage = ({ user }: Props) => {
         <ViteClient />
         <Link href="/src/style.css" rel="stylesheet" />
 
-        <link rel="canonical" href="https://cerberauth-hono-oidc.pages.dev/" />
+        <link rel="canonical" href="https://hono-app-oidc.cerberauth.workers.dev/" />
         <title>Hono App Example using OpenID Connect</title>
       </head>
 
