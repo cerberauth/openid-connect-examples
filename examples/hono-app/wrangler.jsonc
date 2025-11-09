@@ -1,6 +1,19 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "hono-app",
+  "name": "hono-app-oidc",
   "compatibility_date": "2025-08-03",
-  "main": "./src/index.tsx"
+  "main": "./src/index.tsx",
+  "vars": {
+    "AUTH_ISSUER": "https://testid.cerberauth.com",
+    "AUTH_CLIENT_ID": "6bb775a0-eb2e-468e-ae5d-29c4725cca4a",
+    "AUTH_REDIRECT_URI": "https://hono-app-oidc.cerberauth.workers.dev/auth/callback",
+    "AUTH_POST_LOGOUT_REDIRECT_URI": "https://hono-app-oidc.cerberauth.workers.dev/"
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./public"
+  },
+  "observability": {
+    "enabled": true
+  }
 }

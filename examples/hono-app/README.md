@@ -6,7 +6,7 @@ Disclaimer: This project is for educational purposes only and should not be used
 
 ## Deployment
 
-This project is deployed on Cloudflare Pages. You can access the live demo [here](https://cerberauth-hono-oidc.pages.dev/).
+This project is deployed on Cloudflare Pages. You can access the live demo [here](https://hono-app-oidc.cerberauth.workers.dev/).
 
 ## Prerequisites
 
