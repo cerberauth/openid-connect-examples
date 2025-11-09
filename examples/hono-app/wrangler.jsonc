@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "hono-app-oidc",
-  "compatibility_date": "2025-08-03",
+  "compatibility_date": "2025-11-09",
   "main": "./src/index.tsx",
   "vars": {
     "AUTH_ISSUER": "https://testid.cerberauth.com",
