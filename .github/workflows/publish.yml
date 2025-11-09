@@ -9,7 +9,65 @@ on:
       - main
 
 jobs:
-  deploy-nodejs-cloudflare:
+  list-wrangler-examples:
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - id: set-matrix
+        run: echo "matrix=$(find ./examples -type f -name 'wrangler.jsonc' -exec dirname {} \; | sort -u | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+
+  deploy-nodejs-cloudflare-workers:
+    needs: list-wrangler-examples
+    name: Deploy ${{ matrix.workingDirectory }} to Cloudflare Workers
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ matrix.workingDirectory }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        workingDirectory: ${{ fromJson(needs.list-wrangler-examples.outputs.matrix) }}
+
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v5
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: '${{ matrix.workingDirectory }}/package-lock.json'
+
+      - name: Install dependencies 👨🏻‍💻
+        run: npm ci
+
+      - name: Run build
+        run: npm run build
+
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ${{ matrix.workingDirectory }}
+          command: deploy
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  # Deprecated deployments
+  deploy-nodejs-cloudflare-pages:
+    name: Deploy ${{ matrix.workingDirectory }} to Cloudflare Pages
     runs-on: ubuntu-latest
 
     defaults:
@@ -30,9 +88,6 @@ jobs:
           - workingDirectory: ./examples/angular-spa
             projectName: cerberauth-angular-spa-oidc
             directory: ./dist/angular-spa/browser
-          - workingDirectory: ./examples/hono-app
-            projectName: cerberauth-hono-oidc
-            directory: ./dist
           - workingDirectory: ./examples/nextjs-app
             projectName: cerberauth-nextjs-app-oidc
             directory: ./.vercel/output/static
