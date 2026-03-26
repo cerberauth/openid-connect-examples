@@ -19,10 +19,25 @@ jobs:
       - uses: actions/checkout@v6
 
       - id: set-matrix
-        run: echo "matrix=$(ls examples/ | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+        run: echo "matrix=$(find ./examples -maxdepth 2 -name 'Dockerfile' -exec dirname {} \; | xargs -I{} basename {} | sort | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+
+  lint-dockerfiles:
+    needs: list-examples
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        example: ${{ fromJson(needs.list-examples.outputs.matrix) }}
+
+    steps:
+      - name: Lint Dockerfile
+        uses: cerberauth/ci/actions/docker-lint@main
+        with:
+          dockerfile: examples/${{ matrix.example }}/Dockerfile
 
   example-docker:
-    needs: list-examples
+    needs: [list-examples, lint-dockerfiles]
     runs-on: ubuntu-latest
 
     permissions:
