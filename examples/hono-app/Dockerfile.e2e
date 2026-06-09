@@ -1,0 +1,12 @@
+FROM node:lts
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+
+EXPOSE 4005
+
+CMD ["sh", "-c", "npx wrangler dev --port 4005 --no-live-reload --ip 0.0.0.0 --var AUTH_ISSUER:${AUTH_ISSUER} --var AUTH_CLIENT_ID:${AUTH_CLIENT_ID} --var AUTH_CLIENT_SECRET:${AUTH_CLIENT_SECRET} --var AUTH_REDIRECT_URI:${AUTH_REDIRECT_URI} --var AUTH_POST_LOGOUT_REDIRECT_URI:${AUTH_POST_LOGOUT_REDIRECT_URI}"]

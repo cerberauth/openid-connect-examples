@@ -4,7 +4,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [{
     id: 'testid',
     name: 'TestID',
-    issuer: 'https://testid.cerberauth.com',
+    issuer: process.env.AUTH_ISSUER || 'https://testid.cerberauth.com',
     type: 'oidc',
     clientId: process.env.AUTH_CLIENT_ID,
     clientSecret: process.env.AUTH_CLIENT_SECRET,

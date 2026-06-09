@@ -13,7 +13,7 @@
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
-    "oauth4webapi": "^2.10.3",
+    "oauth4webapi": "^3.8.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "wouter": "^3.7.1"

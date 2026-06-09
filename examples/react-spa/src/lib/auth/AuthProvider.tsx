@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Client, discoveryRequest, processDiscoveryResponse } from 'oauth4webapi'
+import { allowInsecureRequests, type Client, discoveryRequest, processDiscoveryResponse } from 'oauth4webapi'
 import { AuthContext, type AuthContextType } from './context'
 
 type AuthProviderProps = {
@@ -27,7 +27,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, issuer, cl
 
     try {
       const issuerUrl = new URL(issuer)
-      discoveryRequest(issuerUrl, { algorithm: 'oidc' })
+      const insecureOpts = issuerUrl.protocol === 'http:' ? { [allowInsecureRequests]: true } : {}
+      discoveryRequest(issuerUrl, { algorithm: 'oidc', ...insecureOpts })
         .then((response) => processDiscoveryResponse(issuerUrl, response))
         .then((as) => setAs(as))
         .catch((error) => console.error('Failed to fetch issuer metadata', error))

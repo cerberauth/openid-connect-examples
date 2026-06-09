@@ -1,0 +1,176 @@
+name: openid-connect-e2e
+
+# Run all services:   docker compose -f docker-compose.e2e.yml up --build -d
+# Run single app:     docker compose -f docker-compose.e2e.yml up --build -d stubidp-react react-spa
+# Teardown:           docker compose -f docker-compose.e2e.yml down
+#
+# Note: nextjs-app and hono-app use network_mode: host (Linux only).
+# On macOS/Windows Docker Desktop, those two apps may not work correctly.
+
+services:
+  stubidp-angular:
+    image: ghcr.io/cerberauth/stubidp:latest
+    command: []
+    environment:
+      STUBIDP_PORT: "8481"
+      STUBIDP_CLIENT_ID: e2e-test-client
+      STUBIDP_PUBLIC_CLIENT: "true"
+      STUBIDP_SKIP_PROMPT: "true"
+      STUBIDP_REDIRECT_URI: http://localhost:4001/
+      STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4001/
+      STUBIDP_RATE_LIMIT_DISABLED: "true"
+      STUBIDP_DEFAULT_USER: '{"sub":"e2e-user","email":"e2e@example.com","name":"E2E User"}'
+    ports:
+      - "8481:8481"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8481/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  angular-spa:
+    build:
+      context: ./examples/angular-spa
+      args:
+        NG_CONFIGURATION: e2e
+    ports:
+      - "4001:80"
+    depends_on:
+      stubidp-angular:
+        condition: service_healthy
+
+  stubidp-react:
+    image: ghcr.io/cerberauth/stubidp:latest
+    command: []
+    environment:
+      STUBIDP_PORT: "8482"
+      STUBIDP_CLIENT_ID: e2e-test-client
+      STUBIDP_PUBLIC_CLIENT: "true"
+      STUBIDP_SKIP_PROMPT: "true"
+      STUBIDP_REDIRECT_URI: http://localhost:4002
+      STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4002
+      STUBIDP_RATE_LIMIT_DISABLED: "true"
+      STUBIDP_DEFAULT_USER: '{"sub":"e2e-user","email":"e2e@example.com","name":"E2E User"}'
+    ports:
+      - "8482:8482"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8482/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  react-spa:
+    build:
+      context: ./examples/react-spa
+      args:
+        VITE_OIDC_ISSUER: http://localhost:8482
+        VITE_OIDC_CLIENT_ID: e2e-test-client
+    ports:
+      - "4002:80"
+    depends_on:
+      stubidp-react:
+        condition: service_healthy
+
+  stubidp-vue:
+    image: ghcr.io/cerberauth/stubidp:latest
+    command: []
+    environment:
+      STUBIDP_PORT: "8483"
+      STUBIDP_CLIENT_ID: e2e-test-client
+      STUBIDP_PUBLIC_CLIENT: "true"
+      STUBIDP_SKIP_PROMPT: "true"
+      STUBIDP_REDIRECT_URI: http://localhost:4003
+      STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4003
+      STUBIDP_RATE_LIMIT_DISABLED: "true"
+      STUBIDP_DEFAULT_USER: '{"sub":"e2e-user","email":"e2e@example.com","name":"E2E User"}'
+    ports:
+      - "8483:8483"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8483/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  vue-spa:
+    build:
+      context: ./examples/vue-spa
+      args:
+        VITE_OIDC_ISSUER: http://localhost:8483
+        VITE_OIDC_CLIENT_ID: e2e-test-client
+    ports:
+      - "4003:80"
+    depends_on:
+      stubidp-vue:
+        condition: service_healthy
+
+  # Uses network_mode: host so the container can reach stubidp on localhost:8484.
+  stubidp-nextjs:
+    image: ghcr.io/cerberauth/stubidp:latest
+    command: []
+    environment:
+      STUBIDP_PORT: "8484"
+      STUBIDP_CLIENT_ID: e2e-test-client
+      STUBIDP_CLIENT_SECRET: e2e-test-secret
+      STUBIDP_SKIP_PROMPT: "true"
+      STUBIDP_REDIRECT_URI: http://localhost:4004/api/auth/callback/testid
+      STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4004
+      STUBIDP_RATE_LIMIT_DISABLED: "true"
+    ports:
+      - "8484:8484"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8484/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  nextjs-app:
+    build:
+      context: ./examples/nextjs-app
+    network_mode: host
+    environment:
+      PORT: "4004"
+      AUTH_ISSUER: http://localhost:8484
+      AUTH_CLIENT_ID: e2e-test-client
+      AUTH_CLIENT_SECRET: e2e-test-secret
+      AUTH_SECRET: e2e-nextauth-secret-32-chars!!!
+      AUTH_TRUST_HOST: "true"
+      AUTH_URL: http://localhost:4004
+    depends_on:
+      stubidp-nextjs:
+        condition: service_healthy
+
+  # Uses network_mode: host so the container can reach stubidp on localhost:8485.
+  stubidp-hono:
+    image: ghcr.io/cerberauth/stubidp:latest
+    command: []
+    environment:
+      STUBIDP_PORT: "8485"
+      STUBIDP_CLIENT_ID: e2e-test-client
+      STUBIDP_CLIENT_SECRET: e2e-test-secret
+      STUBIDP_SKIP_PROMPT: "true"
+      STUBIDP_REDIRECT_URI: http://localhost:4005/auth/callback
+      STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4005/
+      STUBIDP_RATE_LIMIT_DISABLED: "true"
+    ports:
+      - "8485:8485"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8485/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  hono-app:
+    build:
+      context: ./examples/hono-app
+      dockerfile: Dockerfile.e2e
+    network_mode: host
+    environment:
+      PORT: "4005"
+      AUTH_ISSUER: http://localhost:8485
+      AUTH_CLIENT_ID: e2e-test-client
+      AUTH_CLIENT_SECRET: e2e-test-secret
+      AUTH_REDIRECT_URI: http://localhost:4005/auth/callback
+      AUTH_POST_LOGOUT_REDIRECT_URI: http://localhost:4005/
+    depends_on:
+      stubidp-hono:
+        condition: service_healthy
