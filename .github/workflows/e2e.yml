@@ -34,6 +34,10 @@ jobs:
             port: 4005
             stubidp-port: 8485
             redirect-uri: http://localhost:4005/auth/callback
+          - app: nuxt-app
+            port: 4006
+            stubidp-port: 8486
+            redirect-uri: http://localhost:4006/auth/oidc
 
     steps:
       - uses: actions/checkout@v4
@@ -64,7 +68,7 @@ jobs:
                 -t e2e-app \
                 ./examples/${{ matrix.app }}
               ;;
-            nextjs-app|hono-app)
+            nextjs-app|hono-app|nuxt-app)
               docker build -t e2e-app ./examples/${{ matrix.app }}
               ;;
           esac
@@ -99,6 +103,18 @@ jobs:
                 -e AUTH_CLIENT_SECRET=${{ steps.stubidp.outputs.client-secret }} \
                 -e AUTH_REDIRECT_URI=http://localhost:${{ matrix.port }}/auth/callback \
                 -e AUTH_POST_LOGOUT_REDIRECT_URI=http://localhost:${{ matrix.port }}/ \
+                e2e-app
+              ;;
+            nuxt-app)
+              docker run -d \
+                --name e2e-app-container \
+                --network host \
+                -e PORT=${{ matrix.port }} \
+                -e NUXT_SESSION_PASSWORD=e2e-nuxt-session-password-32chars!! \
+                -e NUXT_OAUTH_OIDC_CLIENT_ID=${{ steps.stubidp.outputs.client-id }} \
+                -e NUXT_OAUTH_OIDC_CLIENT_SECRET=${{ steps.stubidp.outputs.client-secret }} \
+                -e NUXT_OAUTH_OIDC_OPENID_CONFIG=${{ steps.stubidp.outputs.issuer }}/.well-known/openid-configuration \
+                -e NUXT_OAUTH_OIDC_REDIRECT_URL=http://localhost:${{ matrix.port }}/auth/oidc \
                 e2e-app
               ;;
           esac

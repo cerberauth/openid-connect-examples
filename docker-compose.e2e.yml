@@ -163,3 +163,37 @@ services:
     depends_on:
       stubidp-hono:
         condition: service_healthy
+
+  # ─── Nuxt App ───────────────────────────────────────────────────────────────
+  # Uses network_mode: host so the container can reach stubidp on localhost:8486.
+  stubidp-nuxt:
+    image: node:jod-alpine
+    command: >
+      sh -c "npx --yes @cerberauth/stubidp
+      --port 8486
+      --client-id e2e-test-client
+      --client-secret e2e-test-secret
+      --skip-prompt
+      --redirect-uri http://localhost:4006/auth/oidc"
+    ports:
+      - "8486:8486"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8486/.well-known/openid-configuration"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  nuxt-app:
+    build:
+      context: ./examples/nuxt-app
+    network_mode: host
+    environment:
+      PORT: "4006"
+      NUXT_SESSION_PASSWORD: "e2e-nuxt-session-password-32chars!!"
+      NUXT_OAUTH_OIDC_CLIENT_ID: e2e-test-client
+      NUXT_OAUTH_OIDC_CLIENT_SECRET: e2e-test-secret
+      NUXT_OAUTH_OIDC_OPENID_CONFIG: http://localhost:8486/.well-known/openid-configuration
+      NUXT_OAUTH_OIDC_REDIRECT_URL: http://localhost:4006/auth/oidc
+    depends_on:
+      stubidp-nuxt:
+        condition: service_healthy
