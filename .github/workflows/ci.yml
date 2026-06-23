@@ -16,7 +16,7 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - id: set-matrix
         run: echo "matrix=$(find ./examples -maxdepth 2 -name 'Dockerfile' -exec dirname {} \; | xargs -I{} basename {} | sort | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
@@ -49,7 +49,7 @@ jobs:
         example: ${{ fromJson(needs.list-examples.outputs.matrix) }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
