@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { getUserSession } from '../lib/auth.server'
+
+const user = getUserSession(Astro.cookies)
+const isAuthenticated = !!user
+
+const buttonClass =
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-slate-50 hover:bg-slate-900/90 h-10 px-4 py-2'
+---
+
+<Layout
+  title="Astro Application Example using OpenID Connect"
+  description="This example demonstrates how to authenticate users in an Astro Application using OpenID Connect Protocol."
+>
+  <div class="bg-slate-100 min-h-screen">
+    <main
+      role="main"
+      class="flex flex-col items-center justify-center h-5/6 space-y-8 text-center px-4 py-16 lg:pt-32 md:pt-16 sm:pt-8"
+    >
+      <h1 class="mt-4 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-5xl xl:max-w-[43.5rem]">
+        Astro Application Example using OpenID Connect
+      </h1>
+      <p class="mt-4 max-w-lg text-lg text-slate-700">
+        This example demonstrates how to authenticate users in an Astro Application using OpenID Connect Protocol.
+      </p>
+      {
+        isAuthenticated ? (
+          <form method="post" action="/api/auth/logout">
+            <button type="submit" class={buttonClass}>
+              Logout
+            </button>
+          </form>
+        ) : (
+          <form method="post" action="/api/auth/testid">
+            <button type="submit" class={buttonClass}>
+              Login with TestID
+            </button>
+          </form>
+        )
+      }
+      <p class="mt-4 max-w-lg text-slate-700">
+        If you want to checkout out how to implement OpenID Connect in your Astro app, take a look at the <a
+          class="text-indigo-600"
+          href="https://github.com/cerberauth/openid-connect-examples/tree/main/examples/astro-app"
+        >source code</a>.
+      </p>
+    </main>
+
+    <footer class="text-center py-4">
+      <p class="text-sm text-gray-500">
+        Proudly part of <a class="text-indigo-600" href="https://www.cerberauth.com">CerberAuth</a> community.
+      </p>
+    </footer>
+  </div>
+</Layout>
