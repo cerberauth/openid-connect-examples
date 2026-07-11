@@ -1,0 +1,40 @@
+{
+  "name": "remix-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "react-router build",
+    "dev": "react-router dev",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0",
+    "@react-router/node": "^7.9.4",
+    "@react-router/serve": "^7.9.4",
+    "arctic": "^3.7.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "dotenv": "^16.4.5",
+    "isbot": "^5.1.17",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.9.4",
+    "remix-auth": "^4.2.0",
+    "remix-auth-oauth2": "^3.4.0",
+    "tailwind-merge": "^2.4.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^7.9.4",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5",
+    "vite": "^6.0.0",
+    "vite-tsconfig-paths": "^5.0.0"
+  }
+}
