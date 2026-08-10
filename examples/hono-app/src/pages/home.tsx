@@ -34,6 +34,7 @@ export const HomePage = ({ user }: Props) => {
             </p>
             {isAuthenticated ? (
               <a
+                data-testid="logout-button"
                 className="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700"
                 href="/auth/logout"
               >
@@ -41,6 +42,7 @@ export const HomePage = ({ user }: Props) => {
               </a>
             ) : (
               <a
+                data-testid="login-button"
                 className="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700"
                 href="/auth/login"
               >

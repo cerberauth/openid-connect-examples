@@ -14,7 +14,8 @@ CMD [ "npm", "start" ]
 
 FROM development AS builder
 
-RUN npm run build
+ARG NG_CONFIGURATION=production
+RUN npm run build -- --configuration=$NG_CONFIGURATION
 
 FROM nginx:alpine
 

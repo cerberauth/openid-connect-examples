@@ -14,10 +14,10 @@ const { isAuthenticated, login, logout } = useAuth()
       <p class="mt-4 max-w-lg text-lg text-slate-700">
         This example demonstrates how to authenticate users in a Vue Application using OpenID Connect Protocol.
       </p>
-      <button class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700" v-if="isAuthenticated" @click="logout">
+      <button data-testid="logout-button" class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700" v-if="isAuthenticated" @click="logout">
         Logout
       </button>
-      <button class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700" v-else @click="login">
+      <button data-testid="login-button" class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700" v-else @click="login">
         Login with TestID
       </button>
       <p class="mt-4 max-w-lg text-slate-700">

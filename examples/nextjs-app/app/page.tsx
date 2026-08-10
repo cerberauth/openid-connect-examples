@@ -18,11 +18,11 @@ export default function Home() {
           This example demonstrates how to authenticate users in a Next.js Application using OpenID Connect Protocol.
         </p>
         {isAuthenticated ? (
-          <Button onClick={() => signOut()}>
+          <Button data-testid="logout-button" onClick={() => signOut()}>
             Logout
           </Button>
         ) : (
-          <Button onClick={() => signIn('testid')}>
+          <Button data-testid="login-button" onClick={() => signIn('testid')}>
             Login with TestID
           </Button>
         )}

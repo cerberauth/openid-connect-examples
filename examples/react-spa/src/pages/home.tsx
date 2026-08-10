@@ -14,11 +14,11 @@ export function Home() {
           This example demonstrates how to authenticate users in a React Single Page Application (SPA) using OpenID Connect Protocol.
         </p>
         {isAuthenticated ? (
-          <Button onClick={() => logout()}>
+          <Button data-testid="logout-button" onClick={() => logout()}>
             Logout
           </Button>
         ) : (
-          <Button onClick={() => login()}>
+          <Button data-testid="login-button" onClick={() => login()}>
             Login with TestID
           </Button>
         )}

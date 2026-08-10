@@ -1,0 +1,148 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: angular-spa
+            port: 4001
+            stubidp-port: 8481
+            redirect-uri: http://localhost:4001/index.html
+          - app: react-spa
+            port: 4002
+            stubidp-port: 8482
+            redirect-uri: http://localhost:4002
+          - app: vue-spa
+            port: 4003
+            stubidp-port: 8483
+            redirect-uri: http://localhost:4003
+          - app: nextjs-app
+            port: 4004
+            stubidp-port: 8484
+            redirect-uri: http://localhost:4004/api/auth/callback/testid
+          - app: hono-app
+            port: 4005
+            stubidp-port: 8485
+            redirect-uri: http://localhost:4005/auth/callback
+          - app: nuxt-app
+            port: 4006
+            stubidp-port: 8486
+            redirect-uri: http://localhost:4006/auth/oidc
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start StubIdP
+        id: stubidp
+        uses: cerberauth/stubidp-action@v1
+        with:
+          port: ${{ matrix.stubidp-port }}
+          client-id: e2e-test-client
+          client-secret: e2e-test-secret
+          redirect-uri: ${{ matrix.redirect-uri }}
+          skip-prompt: "true"
+
+      - name: Build app image
+        run: |
+          case "${{ matrix.app }}" in
+            angular-spa)
+              docker build \
+                --build-arg NG_CONFIGURATION=e2e \
+                -t e2e-app \
+                ./examples/${{ matrix.app }}
+              ;;
+            react-spa|vue-spa)
+              docker build \
+                --build-arg VITE_OIDC_ISSUER=${{ steps.stubidp.outputs.issuer }} \
+                --build-arg VITE_OIDC_CLIENT_ID=${{ steps.stubidp.outputs.client-id }} \
+                -t e2e-app \
+                ./examples/${{ matrix.app }}
+              ;;
+            nextjs-app|hono-app|nuxt-app)
+              docker build -t e2e-app ./examples/${{ matrix.app }}
+              ;;
+          esac
+
+      - name: Start app container
+        run: |
+          case "${{ matrix.app }}" in
+            angular-spa|react-spa|vue-spa)
+              docker run -d \
+                --name e2e-app-container \
+                -p ${{ matrix.port }}:80 \
+                e2e-app
+              ;;
+            nextjs-app)
+              docker run -d \
+                --name e2e-app-container \
+                --network host \
+                -e PORT=${{ matrix.port }} \
+                -e AUTH_ISSUER=${{ steps.stubidp.outputs.issuer }} \
+                -e AUTH_CLIENT_ID=${{ steps.stubidp.outputs.client-id }} \
+                -e AUTH_CLIENT_SECRET=${{ steps.stubidp.outputs.client-secret }} \
+                -e AUTH_SECRET=e2e-nextauth-secret-32-chars!!! \
+                e2e-app
+              ;;
+            hono-app)
+              docker run -d \
+                --name e2e-app-container \
+                --network host \
+                -e PORT=${{ matrix.port }} \
+                -e AUTH_ISSUER=${{ steps.stubidp.outputs.issuer }} \
+                -e AUTH_CLIENT_ID=${{ steps.stubidp.outputs.client-id }} \
+                -e AUTH_CLIENT_SECRET=${{ steps.stubidp.outputs.client-secret }} \
+                -e AUTH_REDIRECT_URI=http://localhost:${{ matrix.port }}/auth/callback \
+                -e AUTH_POST_LOGOUT_REDIRECT_URI=http://localhost:${{ matrix.port }}/ \
+                e2e-app
+              ;;
+            nuxt-app)
+              docker run -d \
+                --name e2e-app-container \
+                --network host \
+                -e PORT=${{ matrix.port }} \
+                -e NUXT_SESSION_PASSWORD=e2e-nuxt-session-password-32chars!! \
+                -e NUXT_OAUTH_OIDC_CLIENT_ID=${{ steps.stubidp.outputs.client-id }} \
+                -e NUXT_OAUTH_OIDC_CLIENT_SECRET=${{ steps.stubidp.outputs.client-secret }} \
+                -e NUXT_OAUTH_OIDC_OPENID_CONFIG=${{ steps.stubidp.outputs.issuer }}/.well-known/openid-configuration \
+                -e NUXT_OAUTH_OIDC_REDIRECT_URL=http://localhost:${{ matrix.port }}/auth/oidc \
+                e2e-app
+              ;;
+          esac
+
+      - name: Wait for app to be ready
+        run: |
+          timeout 60 sh -c 'until curl -sf http://localhost:${{ matrix.port }} > /dev/null; do sleep 2; done'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        working-directory: e2e
+        run: npm ci && npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        working-directory: e2e
+        run: npx playwright test --project=${{ matrix.app }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.app }}
+          path: e2e/playwright-report/
+          retention-days: 7
+
+      - name: Stop app container
+        if: always()
+        run: docker stop e2e-app-container && docker rm e2e-app-container
