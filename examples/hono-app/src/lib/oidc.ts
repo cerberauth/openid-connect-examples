@@ -1,4 +1,5 @@
 import {
+  allowInsecureRequests,
   authorizationCodeGrantRequest,
   type AuthorizationServer,
   calculatePKCECodeChallenge,
@@ -69,6 +70,7 @@ type CallbackParams = {
 
 export const processCallback = async ({ as, client, clientSecret, redirectUrl, url, codeVerifier, state, nonce }: CallbackParams) => {
   const clientAuth = ClientSecretBasic(clientSecret)
+  const insecureOpts = new URL(as.issuer).protocol === 'http:' ? { [allowInsecureRequests]: true } : {}
 
   const params = validateAuthResponse(as, client, new URL(url), state)
   const response = await authorizationCodeGrantRequest(
@@ -78,6 +80,7 @@ export const processCallback = async ({ as, client, clientSecret, redirectUrl, u
     params,
     redirectUrl,
     codeVerifier,
+    insecureOpts,
   )
 
   const result = await processAuthorizationCodeResponse(as, client, response, {

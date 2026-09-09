@@ -12,12 +12,12 @@
         Connect Protocol.
       </p>
 
-      <button *ngIf="user; else loginButton" (click)="logout()"
+      <button *ngIf="user; else loginButton" (click)="logout()" data-testid="logout-button"
         class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700">
         Logout
       </button>
       <ng-template #loginButton>
-        <button (click)="login()"
+        <button (click)="login()" data-testid="login-button"
           class="inline-flex justify-center rounded-lg text-sm font-semibold py-3 px-4 bg-slate-900 text-white hover:bg-slate-700">
           Login with TestID
         </button>

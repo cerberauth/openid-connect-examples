@@ -16,6 +16,7 @@ const issuer = import.meta.env.VITE_OIDC_ISSUER
 const clientId = import.meta.env.VITE_OIDC_CLIENT_ID
 
 const issuerUrl = new URL(issuer)
+const insecureOptions = issuerUrl.protocol === 'http:' ? { [oauth.allowInsecureRequests]: true } : {}
 
 const client: oauth.Client = {
   client_id: clientId,
@@ -29,7 +30,7 @@ const getAuthorizationServer = async (): Promise<oauth.AuthorizationServer> => {
     return _as
   }
 
-  _as = await oauth.discoveryRequest(issuerUrl, { algorithm: 'oidc' })
+  _as = await oauth.discoveryRequest(issuerUrl, { algorithm: 'oidc', ...insecureOptions })
     .then((response) => oauth.processDiscoveryResponse(issuerUrl, response))
   if (!_as) {
     throw new Error('Invalid Authorization Server')
@@ -116,6 +117,7 @@ export const handleLoginRedirect = async (): Promise<oauth.UserInfoResponse | un
     params,
     redirectUri,
     codeVerifier,
+    insecureOptions,
   )
 
   const authorizationCodeResult = await oauth.processAuthorizationCodeResponse(as, client, authorizationResponse, { expectedNonce: nonce })
@@ -132,7 +134,7 @@ export const handleLoginRedirect = async (): Promise<oauth.UserInfoResponse | un
   }
 
   // UserInfo Request
-  const response = await oauth.userInfoRequest(as, client, accessToken)
+  const response = await oauth.userInfoRequest(as, client, accessToken, insecureOptions)
   const user = await oauth.processUserInfoResponse(as, client, sub, response)
   console.log('UserInfo Response', user)
 

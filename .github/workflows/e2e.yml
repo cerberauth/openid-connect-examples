@@ -1,0 +1,119 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: angular-spa
+            port: 4001
+            stubidp-port: 8481
+            redirect-uri: http://localhost:4001/index.html
+            post-logout-redirect-uri: http://localhost:4001/index.html
+            public-client: 'true'
+          - app: react-spa
+            port: 4002
+            stubidp-port: 8482
+            redirect-uri: http://localhost:4002
+            post-logout-redirect-uri: http://localhost:4002
+            public-client: 'true'
+          - app: vue-spa
+            port: 4003
+            stubidp-port: 8483
+            redirect-uri: http://localhost:4003
+            post-logout-redirect-uri: http://localhost:4003
+            public-client: 'true'
+          - app: nextjs-app
+            port: 4004
+            stubidp-port: 8484
+            redirect-uri: http://localhost:4004/api/auth/callback/testid
+            post-logout-redirect-uri: http://localhost:4004
+          - app: hono-app
+            port: 4005
+            stubidp-port: 8485
+            redirect-uri: http://localhost:4005/auth/callback
+            # hono-app builds this with `new URL(...)`, which normalizes a
+            # bare origin to have a trailing slash, so StubIdP must be
+            # registered with that exact form.
+            post-logout-redirect-uri: http://localhost:4005/
+
+    steps:
+      - uses: actions/checkout@v6
+
+      # cerberauth/stubidp-action@v1 doesn't yet support the public-client and
+      # post-logout-redirect-uri inputs, so StubIdP is started directly via its
+      # CLI (same approach as scripts/e2e-start.sh uses locally) instead.
+      - name: Start StubIdP
+        id: stubidp
+        run: |
+          set -euo pipefail
+          ISSUER="http://localhost:${{ matrix.stubidp-port }}"
+          CLIENT_ID="e2e-test-client"
+          CLIENT_SECRET="${{ matrix.public-client != 'true' && 'e2e-test-secret' || '' }}"
+
+          docker run -d \
+            --name stubidp \
+            --network host \
+            -e STUBIDP_PORT="${{ matrix.stubidp-port }}" \
+            -e STUBIDP_CLIENT_ID="$CLIENT_ID" \
+            -e STUBIDP_CLIENT_SECRET="$CLIENT_SECRET" \
+            -e STUBIDP_REDIRECT_URI="${{ matrix.redirect-uri }}" \
+            -e STUBIDP_POST_LOGOUT_REDIRECT_URI="${{ matrix.post-logout-redirect-uri }}" \
+            -e STUBIDP_PUBLIC_CLIENT="${{ matrix.public-client || 'false' }}" \
+            -e STUBIDP_SKIP_PROMPT="true" \
+            -e STUBIDP_DEFAULT_USER='{"sub":"e2e-test-user","email":"e2e-test-user@example.com"}' \
+            node:jod-alpine \
+            sh -c "npx --yes @cerberauth/stubidp"
+
+          echo "==> Waiting for StubIdP on $ISSUER..."
+          timeout 60 sh -c "until curl -sf $ISSUER/.well-known/openid-configuration > /dev/null; do sleep 2; done"
+
+          echo "issuer=$ISSUER" >> "$GITHUB_OUTPUT"
+          echo "client-id=$CLIENT_ID" >> "$GITHUB_OUTPUT"
+          echo "client-secret=$CLIENT_SECRET" >> "$GITHUB_OUTPUT"
+
+      - name: Build and start app
+        run: |
+          ./scripts/e2e-start.sh \
+            ${{ matrix.app }} \
+            ${{ matrix.port }} \
+            ${{ steps.stubidp.outputs.issuer }} \
+            ${{ steps.stubidp.outputs.client-id }} \
+            ${{ steps.stubidp.outputs.client-secret }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install Playwright
+        working-directory: e2e
+        run: npm ci && npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        working-directory: e2e
+        run: npx playwright test --project=${{ matrix.app }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-${{ matrix.app }}
+          path: e2e/playwright-report/
+          retention-days: 7
+
+      - name: Stop app container
+        if: always()
+        run: docker stop e2e-app-container && docker rm e2e-app-container
+
+      - name: Stop StubIdP
+        if: always()
+        run: docker stop stubidp && docker rm stubidp

@@ -27,7 +27,7 @@ export class AppComponent {
   }
 
   login() {
-    this.oauthService.initLoginFlow();
+    this.oauthService.loadDiscoveryDocument().then(() => this.oauthService.initLoginFlow());
   }
 
   logout() {

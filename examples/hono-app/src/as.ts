@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { type Client, discoveryRequest, processDiscoveryResponse, type AuthorizationServer } from 'oauth4webapi'
+import { type Client, discoveryRequest, processDiscoveryResponse, type AuthorizationServer, allowInsecureRequests } from 'oauth4webapi'
 
 export function getClient(c: Context) {
   const issuer = new URL(c.env.AUTH_ISSUER)
@@ -22,7 +22,8 @@ let authorizationServer: AuthorizationServer | undefined = undefined
 export async function getAuthorizationServer(c: Context): Promise<AuthorizationServer> {
   if (!authorizationServer) {
     const { issuer } = getClient(c)
-    let as = await discoveryRequest(issuer, { algorithm: 'oidc' })
+    const insecureOpts = issuer.protocol === 'http:' ? { [allowInsecureRequests]: true } : {}
+    let as = await discoveryRequest(issuer, { algorithm: 'oidc', ...insecureOpts })
       .then((response) => processDiscoveryResponse(issuer, response))
     authorizationServer = as
   }

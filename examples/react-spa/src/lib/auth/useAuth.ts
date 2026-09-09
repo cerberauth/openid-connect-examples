@@ -81,38 +81,25 @@ export const useAuth = () => {
     let sub: string
     let accessToken: string
 
-    // @ts-expect-error
-    const currentUrl: URL = new URL(window.location)
+    const currentUrl: URL = new URL(window.location.href)
     const params = oauth.validateAuthResponse(as, client, currentUrl, state)
-    if (oauth.isOAuth2Error(params)) {
-      console.error('Error Response', params)
-      setHandlingRedirect(false)
-      return
-    }
+
+    const insecureOpts = new URL(as.issuer).protocol === 'http:' ? { [oauth.allowInsecureRequests]: true } : {}
 
     const authorizationResponse = await oauth.authorizationCodeGrantRequest(
       as,
       client,
+      oauth.None(),
       params,
       redirectUri,
       code_verifier,
+      insecureOpts,
     )
 
-    let challenges: oauth.WWWAuthenticateChallenge[] | undefined
-    if ((challenges = oauth.parseWwwAuthenticateChallenges(authorizationResponse))) {
-      for (const challenge of challenges) {
-        console.error('WWW-Authenticate Challenge', challenge)
-      }
-      setHandlingRedirect(false)
-      return
-    }
-
-    const authorizationCodeResult = await oauth.processAuthorizationCodeOpenIDResponse(as, client, authorizationResponse, nonce)
-    if (oauth.isOAuth2Error(authorizationCodeResult)) {
-      console.error('Error Response', authorizationCodeResult)
-      setHandlingRedirect(false)
-      return
-    }
+    const authorizationCodeResult = await oauth.processAuthorizationCodeResponse(as, client, authorizationResponse, {
+      expectedNonce: nonce,
+      requireIdToken: true,
+    })
 
     console.log('Access Token Response', authorizationCodeResult)
     accessToken = authorizationCodeResult.access_token
@@ -122,16 +109,7 @@ export const useAuth = () => {
     console.log('ID Token Claims', claims)
     sub = claims.sub
 
-    // UserInfo Request
-    const response = await oauth.userInfoRequest(as, client, accessToken)
-    if (challenges = oauth.parseWwwAuthenticateChallenges(response)) {
-      for (const challenge of challenges) {
-        console.error('WWW-Authenticate Challenge', challenge)
-      }
-      setHandlingRedirect(false)
-      return
-    }
-
+    const response = await oauth.userInfoRequest(as, client, accessToken, insecureOpts)
     const user = await oauth.processUserInfoResponse(as, client, sub, response)
     console.log('UserInfo Response', user)
     setUser(user)
