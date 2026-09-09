@@ -174,3 +174,40 @@ services:
     depends_on:
       stubidp-hono:
         condition: service_healthy
+
+  stubidp-tanstack-start:
+    image: ghcr.io/cerberauth/stubidp:latest
+    command: []
+    environment:
+      STUBIDP_PORT: "8486"
+      STUBIDP_CLIENT_ID: e2e-test-client
+      STUBIDP_PUBLIC_CLIENT: "true"
+      STUBIDP_SKIP_PROMPT: "true"
+      STUBIDP_REDIRECT_URI: http://localhost:4006
+      STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4006
+      STUBIDP_RATE_LIMIT_DISABLED: "true"
+      STUBIDP_DEFAULT_USER: '{"sub":"e2e-user","email":"e2e@example.com","name":"E2E User"}'
+    ports:
+      - "8486:8486"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8486/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  tanstack-start-app:
+    build:
+      context: ./examples/tanstack-start-app
+      args:
+        VITE_OIDC_ISSUER: http://localhost:8486
+        VITE_OIDC_CLIENT_ID: e2e-test-client
+      # TanStack Start's SPA-mode build prerenders the shell by having a
+      # local server fetch itself over loopback. BuildKit sandboxes RUN
+      # network by default, which refuses that loopback connection, so this
+      # build needs full host network access.
+      network: host
+    ports:
+      - "4006:80"
+    depends_on:
+      stubidp-tanstack-start:
+        condition: service_healthy

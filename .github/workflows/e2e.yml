@@ -45,6 +45,12 @@ jobs:
             # bare origin to have a trailing slash, so StubIdP must be
             # registered with that exact form.
             post-logout-redirect-uri: http://localhost:4005/
+          - app: tanstack-start-app
+            port: 4006
+            stubidp-port: 8486
+            redirect-uri: http://localhost:4006
+            post-logout-redirect-uri: http://localhost:4006
+            public-client: 'true'
 
     steps:
       - uses: actions/checkout@v6

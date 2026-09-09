@@ -10,7 +10,7 @@ if [ $# -eq 0 ]; then
   echo "==> Starting all apps via docker-compose..."
   docker compose -f "$COMPOSE_FILE" up --build -d
 
-  for port in 4001 4002 4003 4004 4005; do
+  for port in 4001 4002 4003 4004 4005 4006; do
     echo "==> Waiting for app on port $port..."
     timeout 120 sh -c "until curl -sf http://localhost:$port > /dev/null; do sleep 2; done"
     echo "    port $port ready."
@@ -24,7 +24,7 @@ if [ $# -eq 0 ]; then
   exit $?
 fi
 
-APP="${1:?app name required (angular-spa|react-spa|vue-spa|nextjs-app|hono-app)}"
+APP="${1:?app name required (angular-spa|react-spa|vue-spa|nextjs-app|hono-app|tanstack-start-app)}"
 PORT="${2:?port required}"
 OIDC_ISSUER="${3:-}"
 OIDC_CLIENT_ID="${4:-}"
@@ -63,6 +63,12 @@ case "$APP" in
     POST_LOGOUT_REDIRECT_URI="http://localhost:$PORT/"
     STUBIDP_PORT=8485
     PUBLIC_CLIENT=false
+    ;;
+  tanstack-start-app)
+    REDIRECT_URI="http://localhost:$PORT"
+    POST_LOGOUT_REDIRECT_URI="http://localhost:$PORT"
+    STUBIDP_PORT=8486
+    PUBLIC_CLIENT=true
     ;;
   *)
     echo "Unknown app: $APP" >&2
@@ -118,6 +124,18 @@ case "$APP" in
       -t e2e-app \
       "$REPO_ROOT/examples/$APP"
     ;;
+  tanstack-start-app)
+    # TanStack Start's SPA-mode build prerenders the shell by having a local
+    # server fetch itself over loopback. BuildKit sandboxes RUN network by
+    # default, which refuses that loopback connection, so this build needs
+    # full host network access.
+    docker build \
+      --network host \
+      --build-arg VITE_OIDC_ISSUER="$OIDC_ISSUER" \
+      --build-arg VITE_OIDC_CLIENT_ID="$OIDC_CLIENT_ID" \
+      -t e2e-app \
+      "$REPO_ROOT/examples/$APP"
+    ;;
   nextjs-app)
     docker build -t e2e-app "$REPO_ROOT/examples/$APP"
     ;;
@@ -128,7 +146,7 @@ esac
 
 echo "==> Starting $APP on port $PORT..."
 case "$APP" in
-  angular-spa|react-spa|vue-spa)
+  angular-spa|react-spa|vue-spa|tanstack-start-app)
     docker run -d \
       --name e2e-app-container \
       -p "$PORT:80" \

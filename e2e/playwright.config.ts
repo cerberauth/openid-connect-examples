@@ -44,5 +44,12 @@ export default defineConfig({
         baseURL: 'http://localhost:4005',
       },
     },
+    {
+      name: 'tanstack-start-app',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:4006',
+      },
+    },
   ],
 })
