@@ -2,7 +2,7 @@ FROM node:jod AS development
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package*.json .npmrc ./
 RUN npm ci
 
 COPY . .

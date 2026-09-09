@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(
-        "bg-slate-100 min-h-screen font-sans antialiased",
+        "bg-surface min-h-screen font-sans antialiased",
         fontSans.variable,
       )}>
         <SessionProvider>
