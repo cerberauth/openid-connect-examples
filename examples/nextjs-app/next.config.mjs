@@ -10,6 +10,7 @@ if (process.env.NODE_ENV === 'development') {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: process.env.NEXT_BUILD_OUTPUT,
+  transpilePackages: ['@cerberauth/ui'],
 };
 
 export default nextConfig;
