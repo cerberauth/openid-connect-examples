@@ -51,5 +51,12 @@ export default defineConfig({
         baseURL: 'http://localhost:4006',
       },
     },
+    {
+      name: 'nuxt-app',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:4007',
+      },
+    },
   ],
 })

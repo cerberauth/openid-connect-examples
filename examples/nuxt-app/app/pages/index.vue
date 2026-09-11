@@ -1,0 +1,47 @@
+<script setup lang="ts">
+const { loggedIn } = useUserSession()
+</script>
+
+<template>
+  <div class="bg-surface min-h-screen">
+    <main role="main"
+      class="flex flex-col items-center justify-center h-5/6 space-y-8 text-center px-4 py-16 lg:pt-32 md:pt-16 sm:pt-8">
+      <h1 class="mt-4 text-2xl font-extrabold tracking-tight text-fg sm:text-5xl xl:max-w-[43.5rem]">
+        Nuxt Application Example using OpenID Connect
+      </h1>
+      <div class="max-w-lg rounded-lg border border-border bg-card p-6 shadow-sm flex flex-col items-center space-y-8 text-center">
+        <p class="text-lg text-on-surface-variant">
+          This example demonstrates how to authenticate users in a Nuxt Application using OpenID Connect Protocol.
+        </p>
+        <a
+          v-if="loggedIn"
+          data-testid="logout-button"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium h-10 px-4 py-2 bg-primary text-primary-fg hover:bg-primary/90"
+          href="/auth/logout"
+        >
+          Logout
+        </a>
+        <a
+          v-else
+          data-testid="login-button"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium h-10 px-4 py-2 bg-primary text-primary-fg hover:bg-primary/90"
+          href="/auth/oidc"
+        >
+          Login with TestID
+        </a>
+      </div>
+      <p class="mt-4 max-w-lg text-on-surface-variant">
+        If you want to checkout out how to implement OpenID Connect in your Nuxt Application, take a look at the <a
+          class="text-primary"
+          href="https://github.com/cerberauth/openid-connect-examples/tree/main/examples/nuxt-app"
+        >source code</a>.
+      </p>
+    </main>
+
+    <footer class="text-center py-4">
+      <p class="text-sm text-on-surface-variant">
+        Proudly part of <a class="text-primary" href="https://www.cerberauth.com">CerberAuth</a> community.
+      </p>
+    </footer>
+  </div>
+</template>
