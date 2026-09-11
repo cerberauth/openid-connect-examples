@@ -51,6 +51,11 @@ jobs:
             redirect-uri: http://localhost:4006
             post-logout-redirect-uri: http://localhost:4006
             public-client: 'true'
+          - app: nuxt-app
+            port: 4007
+            stubidp-port: 8487
+            redirect-uri: http://localhost:4007/auth/oidc
+            post-logout-redirect-uri: http://localhost:4007
 
     steps:
       - uses: actions/checkout@v6
