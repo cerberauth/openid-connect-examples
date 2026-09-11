@@ -4,8 +4,8 @@ name: openid-connect-e2e
 # Run single app:     docker compose -f docker-compose.e2e.yml up --build -d stubidp-react react-spa
 # Teardown:           docker compose -f docker-compose.e2e.yml down
 #
-# Note: nextjs-app and hono-app use network_mode: host (Linux only).
-# On macOS/Windows Docker Desktop, those two apps may not work correctly.
+# Note: nextjs-app, hono-app, and nuxt-app use network_mode: host (Linux only).
+# On macOS/Windows Docker Desktop, those apps may not work correctly.
 
 services:
   stubidp-angular:
@@ -210,4 +210,39 @@ services:
       - "4006:80"
     depends_on:
       stubidp-tanstack-start:
+        condition: service_healthy
+
+  # Uses network_mode: host so the container can reach stubidp on localhost:8487.
+  stubidp-nuxt:
+    image: ghcr.io/cerberauth/stubidp:latest
+    command: []
+    environment:
+      STUBIDP_PORT: "8487"
+      STUBIDP_CLIENT_ID: e2e-test-client
+      STUBIDP_CLIENT_SECRET: e2e-test-secret
+      STUBIDP_SKIP_PROMPT: "true"
+      STUBIDP_REDIRECT_URI: http://localhost:4007/auth/oidc
+      STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4007
+      STUBIDP_RATE_LIMIT_DISABLED: "true"
+    ports:
+      - "8487:8487"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8487/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  nuxt-app:
+    build:
+      context: ./examples/nuxt-app
+    network_mode: host
+    environment:
+      PORT: "4007"
+      NUXT_SESSION_PASSWORD: "e2e-nuxt-session-password-32chars!!"
+      NUXT_OAUTH_OIDC_CLIENT_ID: e2e-test-client
+      NUXT_OAUTH_OIDC_CLIENT_SECRET: e2e-test-secret
+      NUXT_OAUTH_OIDC_OPENID_CONFIG: http://localhost:8487/.well-known/openid-configuration
+      NUXT_OAUTH_OIDC_REDIRECT_URL: http://localhost:4007/auth/oidc
+    depends_on:
+      stubidp-nuxt:
         condition: service_healthy
