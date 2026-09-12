@@ -53,7 +53,7 @@ jobs:
             public-client: 'true'
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # cerberauth/stubidp-action@v1 doesn't yet support the public-client and
       # post-logout-redirect-uri inputs, so StubIdP is started directly via its
