@@ -96,7 +96,7 @@ jobs:
             ${{ steps.stubidp.outputs.client-id }} \
             ${{ steps.stubidp.outputs.client-secret }}
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: '.nvmrc'
 
