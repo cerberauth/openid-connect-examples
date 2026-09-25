@@ -55,7 +55,7 @@ services:
       STUBIDP_CLIENT_ID: e2e-test-client
       STUBIDP_CLIENT_SECRET: e2e-test-secret
       STUBIDP_SKIP_PROMPT: "true"
-      STUBIDP_REDIRECT_URI: http://localhost:4004/api/auth/callback/testid
+      STUBIDP_REDIRECT_URI: http://localhost:4004/api/auth/callback/stubidp
       STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4004
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:8484/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
