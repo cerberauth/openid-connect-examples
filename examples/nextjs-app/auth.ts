@@ -2,9 +2,9 @@ import NextAuth from 'next-auth'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [{
-    id: 'testid',
-    name: 'TestID',
-    issuer: process.env.AUTH_ISSUER || 'https://testid.cerberauth.com',
+    id: 'stubidp',
+    name: 'stubIdP',
+    issuer: process.env.AUTH_ISSUER || 'https://stubidp.cerberauth.com',
     type: 'oidc',
     clientId: process.env.AUTH_CLIENT_ID,
     clientSecret: process.env.AUTH_CLIENT_SECRET,

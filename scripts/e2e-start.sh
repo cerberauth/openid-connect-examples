@@ -50,7 +50,7 @@ case "$APP" in
     PUBLIC_CLIENT=true
     ;;
   nextjs-app)
-    REDIRECT_URI="http://localhost:$PORT/api/auth/callback/testid"
+    REDIRECT_URI="http://localhost:$PORT/api/auth/callback/stubidp"
     POST_LOGOUT_REDIRECT_URI="http://localhost:$PORT"
     STUBIDP_PORT=8484
     PUBLIC_CLIENT=false

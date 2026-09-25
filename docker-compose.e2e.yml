@@ -112,7 +112,7 @@ services:
       STUBIDP_CLIENT_ID: e2e-test-client
       STUBIDP_CLIENT_SECRET: e2e-test-secret
       STUBIDP_SKIP_PROMPT: "true"
-      STUBIDP_REDIRECT_URI: http://localhost:4004/api/auth/callback/testid
+      STUBIDP_REDIRECT_URI: http://localhost:4004/api/auth/callback/stubidp
       STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4004
       STUBIDP_RATE_LIMIT_DISABLED: "true"
     ports:

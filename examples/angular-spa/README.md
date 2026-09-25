@@ -32,7 +32,7 @@ Before getting started, make sure you have the following:
 
 3. Configure the OpenID Connect provider:
 
-If you don't have an OpenID Connect provider, you can use [TestID OpenID Connect Provider](https://testid.cerberauth.com/).
+If you don't have an OpenID Connect provider, you can use [stubIdP](https://stubidp.cerberauth.com/).
 
   - Obtain the client ID and client secret from your OpenID Connect provider.
   - Register the redirect URI for your React SPA in the provider's developer console.
@@ -47,12 +47,12 @@ If you don't have an OpenID Connect provider, you can use [TestID OpenID Connect
       production: false,
       clientId: 'your-client-id',
       redirectUri: 'http://localhost:4200/callback',
-      issuer: 'https://testid.cerberauth.com',
+      issuer: 'https://stubidp.cerberauth.com',
       scopes: 'openid profile email',
     };
     ```
 
-    Replace `your-client-id`, `http://localhost:4200/callback`, and `https://testid.cerberauth.com` with the actual values provided by your OpenID Connect provider.
+    Replace `your-client-id`, `http://localhost:4200/callback`, and `https://stubidp.cerberauth.com` with the actual values provided by your OpenID Connect provider.
 
 5. Start the development server:
 

@@ -35,7 +35,7 @@ jobs:
           - app: nextjs-app
             port: 4004
             stubidp-port: 8484
-            redirect-uri: http://localhost:4004/api/auth/callback/testid
+            redirect-uri: http://localhost:4004/api/auth/callback/stubidp
             post-logout-redirect-uri: http://localhost:4004
           - app: hono-app
             port: 4005

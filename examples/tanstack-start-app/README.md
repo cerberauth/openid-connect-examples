@@ -32,7 +32,7 @@ Before getting started, make sure you have the following:
 
 3. Configure the OpenID Connect provider:
 
-If you don't have an OpenID Connect provider, you can use [TestID OpenID Connect Provider](https://testid.cerberauth.com/).
+If you don't have an OpenID Connect provider, you can use [stubIdP](https://stubidp.cerberauth.com/).
 
   - Obtain the client ID and client secret from your OpenID Connect provider.
   - Register the redirect URI for your TanStack Start app in the provider's developer console.

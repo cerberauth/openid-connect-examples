@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   auth: {
-    issuer: 'https://testid.cerberauth.com',
+    issuer: 'https://stubidp.cerberauth.com',
     redirectUri: window.location.origin + '/index.html',
     clientId: '8f39ed37-ca04-464b-9d65-8aece2e46518',
     responseType: 'code',
