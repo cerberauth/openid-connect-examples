@@ -110,7 +110,7 @@ jobs:
         run: node scripts/stubidp/apply-client-config.mjs
 
       - name: Open PR with config changes
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: chore/stubidp-client-config
           commit-message: 'chore: update stubIdP client for ${{ matrix.key }}'
