@@ -6,7 +6,13 @@ Disclaimer: This project is for educational purposes only and should not be used
 
 ## Deployment
 
-This project is deployed on Cloudflare Workers. You can access the live demo at [react-spa-oidc.cerberauth.workers.dev](https://react-spa-oidc.cerberauth.workers.dev/).
+This project is deployed on [Cloudflare Workers](https://react-spa-oidc.cerberauth.workers.dev/) and on [Vercel](https://cerberauth-react-spa-oidc.vercel.app/).
+
+## Deploy your own
+
+Deploy the project using **Vercel**:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcerberauth%2Fopenid-connect-examples%2Ftree%2Fmain%2Fexamples%2Freact-spa&env=VITE_OIDC_CLIENT_ID&envDescription=Configurations%20Documentation&envLink=https%3A%2F%2Fgithub.com%2Fcerberauth%2Fopenid-connect-examples%2Fblob%2Fmain%2Fexamples%2Freact-spa%2FREADME.md&project-name=cerberauth-react-spa-oidc&repository-name=cerberauth-react-spa-oidc&demo-title=React%20SPA%20with%20OpenID%20Connect&demo-description=A%20React%20SPA%20using%20OpenID%20Connect%20Authorization%20Code%20Flow%20with%20PKCE&demo-url=https%3A%2F%2Freact-spa-oidc.cerberauth.workers.dev%2F)
 
 ## Prerequisites
 

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "sed -i \"s#clientId: '[^']*'#clientId: '$VITE_OIDC_CLIENT_ID'#\" src/environments/environment.ts && npm run build",
+  "outputDirectory": "dist/angular-spa/browser",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}

@@ -5,11 +5,15 @@
     "clientName": "react-spa (openid-connect-examples)",
     "public": true,
     "redirectUris": [
-      "https://react-spa-oidc.cerberauth.workers.dev"
+      "https://react-spa-oidc.cerberauth.workers.dev",
+      "https://cerberauth-react-spa-oidc.vercel.app"
     ],
     "postLogoutRedirectUris": [
-      "https://react-spa-oidc.cerberauth.workers.dev"
-    ]
+      "https://react-spa-oidc.cerberauth.workers.dev",
+      "https://cerberauth-react-spa-oidc.vercel.app"
+    ],
+    "vercelProject": "cerberauth-react-spa-oidc",
+    "vercelClientIdEnvVar": "VITE_OIDC_CLIENT_ID"
   },
   {
     "key": "vue-spa",
@@ -17,11 +21,15 @@
     "clientName": "vue-spa (openid-connect-examples)",
     "public": true,
     "redirectUris": [
-      "https://cerberauth-vue-spa-oidc.pages.dev"
+      "https://cerberauth-vue-spa-oidc.pages.dev",
+      "https://cerberauth-vue-spa-oidc.vercel.app"
     ],
     "postLogoutRedirectUris": [
-      "https://cerberauth-vue-spa-oidc.pages.dev"
-    ]
+      "https://cerberauth-vue-spa-oidc.pages.dev",
+      "https://cerberauth-vue-spa-oidc.vercel.app"
+    ],
+    "vercelProject": "cerberauth-vue-spa-oidc",
+    "vercelClientIdEnvVar": "VITE_OIDC_CLIENT_ID"
   },
   {
     "key": "angular-spa",
@@ -29,11 +37,15 @@
     "clientName": "angular-spa (openid-connect-examples)",
     "public": true,
     "redirectUris": [
-      "https://cerberauth-angular-spa-oidc.pages.dev/index.html"
+      "https://cerberauth-angular-spa-oidc.pages.dev/index.html",
+      "https://cerberauth-angular-spa-oidc.vercel.app/index.html"
     ],
     "postLogoutRedirectUris": [
-      "https://cerberauth-angular-spa-oidc.pages.dev/index.html"
-    ]
+      "https://cerberauth-angular-spa-oidc.pages.dev/index.html",
+      "https://cerberauth-angular-spa-oidc.vercel.app/index.html"
+    ],
+    "vercelProject": "cerberauth-angular-spa-oidc",
+    "vercelClientIdEnvVar": "VITE_OIDC_CLIENT_ID"
   },
   {
     "key": "tanstack-start-app",
@@ -41,11 +53,15 @@
     "clientName": "tanstack-start-app (openid-connect-examples)",
     "public": true,
     "redirectUris": [
-      "https://tanstack-start-app-oidc.cerberauth.workers.dev"
+      "https://tanstack-start-app-oidc.cerberauth.workers.dev",
+      "https://cerberauth-tanstack-start-app-oidc.vercel.app"
     ],
     "postLogoutRedirectUris": [
-      "https://tanstack-start-app-oidc.cerberauth.workers.dev"
-    ]
+      "https://tanstack-start-app-oidc.cerberauth.workers.dev",
+      "https://cerberauth-tanstack-start-app-oidc.vercel.app"
+    ],
+    "vercelProject": "cerberauth-tanstack-start-app-oidc",
+    "vercelClientIdEnvVar": "VITE_OIDC_CLIENT_ID"
   },
   {
     "key": "nextjs-app",
