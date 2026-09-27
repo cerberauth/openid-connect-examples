@@ -54,6 +54,8 @@ jobs:
           echo "secret-prefix=$(jq -r '.secretPrefix' <<< "$config")" >> "$GITHUB_OUTPUT"
           echo "public=$(jq -r '.public' <<< "$config")" >> "$GITHUB_OUTPUT"
           echo "vercel-project=$(jq -r '.vercelProject // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
+          echo "vercel-client-id-env-var=$(jq -r '.vercelClientIdEnvVar // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
+          echo "vercel-client-secret-env-var=$(jq -r '.vercelClientSecretEnvVar // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
 
       - name: Provision client on stubIdP
         id: provision
@@ -87,4 +89,6 @@ jobs:
           VERCEL_PROJECT: ${{ steps.config.outputs.vercel-project }}
           CLIENT_ID: ${{ steps.provision.outputs.client_id }}
           CLIENT_SECRET: ${{ steps.provision.outputs.client_secret }}
+          CLIENT_ID_ENV_VAR: ${{ steps.config.outputs.vercel-client-id-env-var }}
+          CLIENT_SECRET_ENV_VAR: ${{ steps.config.outputs.vercel-client-secret-env-var }}
         run: node scripts/stubidp/sync-vercel-env.mjs

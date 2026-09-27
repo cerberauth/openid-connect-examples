@@ -6,9 +6,11 @@
 const project = process.env.VERCEL_PROJECT
 const token = process.env.VERCEL_TOKEN
 const teamId = process.env.VERCEL_TEAM_ID || ''
+const clientIdEnvVar = process.env.CLIENT_ID_ENV_VAR || 'AUTH_CLIENT_ID'
+const clientSecretEnvVar = process.env.CLIENT_SECRET_ENV_VAR || 'AUTH_CLIENT_SECRET'
 const vars = {
-  AUTH_CLIENT_ID: process.env.CLIENT_ID || '',
-  AUTH_CLIENT_SECRET: process.env.CLIENT_SECRET || '',
+  [clientIdEnvVar]: process.env.CLIENT_ID || '',
+  [clientSecretEnvVar]: process.env.CLIENT_SECRET || '',
 }
 
 if (!project || !token) {

@@ -6,7 +6,13 @@ Disclaimer: This project is for educational purposes only and should not be used
 
 ## Deployment
 
-This project is deployed on Cloudflare Workers. You can access the live demo at [tanstack-start-app-oidc.cerberauth.workers.dev](https://tanstack-start-app-oidc.cerberauth.workers.dev/).
+This project is deployed on [Cloudflare Workers](https://tanstack-start-app-oidc.cerberauth.workers.dev/) and on [Vercel](https://cerberauth-tanstack-start-app-oidc.vercel.app/).
+
+## Deploy your own
+
+Deploy the project using **Vercel**:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcerberauth%2Fopenid-connect-examples%2Ftree%2Fmain%2Fexamples%2Ftanstack-start-app&env=VITE_OIDC_CLIENT_ID&envDescription=Configurations%20Documentation&envLink=https%3A%2F%2Fgithub.com%2Fcerberauth%2Fopenid-connect-examples%2Fblob%2Fmain%2Fexamples%2Ftanstack-start-app%2FREADME.md&project-name=cerberauth-tanstack-start-app-oidc&repository-name=cerberauth-tanstack-start-app-oidc&demo-title=TanStack%20Start%20App%20with%20OpenID%20Connect&demo-description=A%20TanStack%20Start%20App%20using%20OpenID%20Connect%20Authorization%20Code%20Flow%20with%20PKCE&demo-url=https%3A%2F%2Ftanstack-start-app-oidc.cerberauth.workers.dev%2F)
 
 ## Prerequisites
 

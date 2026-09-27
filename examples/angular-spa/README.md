@@ -6,7 +6,13 @@ Disclaimer: This project is for educational purposes only and should not be used
 
 ## Deployment
 
-This project is deployed on Cloudflare Pages. You can access the live demo [here](https://cerberauth-angular-spa-oidc.pages.dev/).
+This project is deployed on [Cloudflare Pages](https://cerberauth-angular-spa-oidc.pages.dev/) and on [Vercel](https://cerberauth-angular-spa-oidc.vercel.app/).
+
+## Deploy your own
+
+Deploy the project using **Vercel**:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcerberauth%2Fopenid-connect-examples%2Ftree%2Fmain%2Fexamples%2Fangular-spa&env=VITE_OIDC_CLIENT_ID&envDescription=Configurations%20Documentation&envLink=https%3A%2F%2Fgithub.com%2Fcerberauth%2Fopenid-connect-examples%2Fblob%2Fmain%2Fexamples%2Fangular-spa%2FREADME.md&project-name=cerberauth-angular-spa-oidc&repository-name=cerberauth-angular-spa-oidc&demo-title=Angular%20SPA%20with%20OpenID%20Connect&demo-description=An%20Angular%20SPA%20using%20OpenID%20Connect%20Authorization%20Code%20Flow%20with%20PKCE&demo-url=https%3A%2F%2Fcerberauth-angular-spa-oidc.pages.dev%2F)
 
 ## Prerequisites
 
