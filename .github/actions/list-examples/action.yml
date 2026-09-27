@@ -1,0 +1,29 @@
+name: List examples
+description: Finds example app directories containing a given marker file and outputs them as a JSON matrix.
+
+inputs:
+  marker-file:
+    description: File that must exist directly inside an example directory (e.g. Dockerfile, wrangler.jsonc)
+    required: true
+  format:
+    description: "'path' to output example directory paths (./examples/foo), 'name' to output just directory basenames (foo)"
+    required: false
+    default: path
+
+outputs:
+  matrix:
+    description: JSON array of matching examples
+    value: ${{ steps.list.outputs.matrix }}
+
+runs:
+  using: composite
+  steps:
+    - id: list
+      shell: bash
+      run: |
+        matches=$(find ./examples -maxdepth 2 -type f -name "${{ inputs.marker-file }}" -exec dirname {} \; | sort -u)
+        if [ "${{ inputs.format }}" = "name" ]; then
+          matches=$(echo "$matches" | xargs -r -I{} basename {})
+        fi
+        matrix=$(echo "$matches" | jq -R -s -c 'split("\n")[:-1]')
+        echo "matrix=$matrix" >> "$GITHUB_OUTPUT"

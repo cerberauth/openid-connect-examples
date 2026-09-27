@@ -4,16 +4,24 @@
     "secretPrefix": "REACT_SPA",
     "clientName": "react-spa (openid-connect-examples)",
     "public": true,
-    "redirectUris": ["http://localhost:5173", "https://react-spa-oidc.cerberauth.workers.dev"],
-    "postLogoutRedirectUris": ["http://localhost:5173", "https://react-spa-oidc.cerberauth.workers.dev"]
+    "redirectUris": [
+      "https://react-spa-oidc.cerberauth.workers.dev"
+    ],
+    "postLogoutRedirectUris": [
+      "https://react-spa-oidc.cerberauth.workers.dev"
+    ]
   },
   {
     "key": "vue-spa",
     "secretPrefix": "VUE_SPA",
     "clientName": "vue-spa (openid-connect-examples)",
     "public": true,
-    "redirectUris": ["http://localhost:5173", "https://cerberauth-vue-spa-oidc.pages.dev"],
-    "postLogoutRedirectUris": ["http://localhost:5173", "https://cerberauth-vue-spa-oidc.pages.dev"]
+    "redirectUris": [
+      "https://cerberauth-vue-spa-oidc.pages.dev"
+    ],
+    "postLogoutRedirectUris": [
+      "https://cerberauth-vue-spa-oidc.pages.dev"
+    ]
   },
   {
     "key": "angular-spa",
@@ -21,11 +29,9 @@
     "clientName": "angular-spa (openid-connect-examples)",
     "public": true,
     "redirectUris": [
-      "http://localhost:4200/index.html",
       "https://cerberauth-angular-spa-oidc.pages.dev/index.html"
     ],
     "postLogoutRedirectUris": [
-      "http://localhost:4200/index.html",
       "https://cerberauth-angular-spa-oidc.pages.dev/index.html"
     ]
   },
@@ -35,11 +41,9 @@
     "clientName": "tanstack-start-app (openid-connect-examples)",
     "public": true,
     "redirectUris": [
-      "http://localhost:5173",
       "https://tanstack-start-app-oidc.cerberauth.workers.dev"
     ],
     "postLogoutRedirectUris": [
-      "http://localhost:5173",
       "https://tanstack-start-app-oidc.cerberauth.workers.dev"
     ]
   },
@@ -49,12 +53,10 @@
     "clientName": "nextjs-app (openid-connect-examples)",
     "public": false,
     "redirectUris": [
-      "http://localhost:3000/api/auth/callback/stubidp",
       "https://cerberauth-nextjs-app-oidc.pages.dev/api/auth/callback/stubidp",
       "https://cerberauth-nextjs-app-oidc.vercel.app/api/auth/callback/stubidp"
     ],
     "postLogoutRedirectUris": [
-      "http://localhost:3000",
       "https://cerberauth-nextjs-app-oidc.pages.dev",
       "https://cerberauth-nextjs-app-oidc.vercel.app"
     ],
@@ -66,10 +68,11 @@
     "clientName": "hono-app (openid-connect-examples)",
     "public": false,
     "redirectUris": [
-      "http://localhost:5173/auth/callback",
       "https://hono-app-oidc.cerberauth.workers.dev/auth/callback"
     ],
-    "postLogoutRedirectUris": ["http://localhost:5173/", "https://hono-app-oidc.cerberauth.workers.dev/"],
+    "postLogoutRedirectUris": [
+      "https://hono-app-oidc.cerberauth.workers.dev/"
+    ],
     "cloudflareWorker": "hono-app-oidc"
   }
 ]

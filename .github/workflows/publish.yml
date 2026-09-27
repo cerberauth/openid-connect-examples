@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   list-wrangler-examples:
@@ -19,7 +16,9 @@ jobs:
       - uses: actions/checkout@v7
 
       - id: set-matrix
-        run: echo "matrix=$(find ./examples -type f -name 'wrangler.jsonc' -exec dirname {} \; | sort -u | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+        uses: ./.github/actions/list-examples
+        with:
+          marker-file: wrangler.jsonc
 
   deploy-nodejs-cloudflare-workers:
     needs: list-wrangler-examples
@@ -54,7 +53,17 @@ jobs:
       - name: Install dependencies 👨🏻‍💻
         run: npm ci
 
+      - name: Resolve stubIdP client config
+        id: stubidp
+        run: |
+          key=$(basename "${{ matrix.workingDirectory }}")
+          config=$(jq -c --arg key "$key" '.[] | select(.key == $key)' "$GITHUB_WORKSPACE/.github/stubidp/clients.json")
+          echo "secret-prefix=$(jq -r '.secretPrefix // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
+          echo "cloudflare-worker=$(jq -r '.cloudflareWorker // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
+
       - name: Run build
+        env:
+          VITE_OIDC_CLIENT_ID: ${{ secrets[format('STUBIDP_{0}_CLIENT_ID', steps.stubidp.outputs.secret-prefix)] }}
         run: npm run build
 
       - uses: cloudflare/wrangler-action@v4
@@ -64,6 +73,21 @@ jobs:
           workingDirectory: ${{ matrix.workingDirectory }}
           command: deploy
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push client credentials to Cloudflare Worker
+        if: steps.stubidp.outputs.cloudflare-worker != ''
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLIENT_ID: ${{ secrets[format('STUBIDP_{0}_CLIENT_ID', steps.stubidp.outputs.secret-prefix)] }}
+          CLIENT_SECRET: ${{ secrets[format('STUBIDP_{0}_CLIENT_SECRET', steps.stubidp.outputs.secret-prefix)] }}
+        run: |
+          printf '%s' "$CLIENT_ID" | \
+            npx wrangler secret put AUTH_CLIENT_ID --name "${{ steps.stubidp.outputs.cloudflare-worker }}"
+          if [ -n "$CLIENT_SECRET" ]; then
+            printf '%s' "$CLIENT_SECRET" | \
+              npx wrangler secret put AUTH_CLIENT_SECRET --name "${{ steps.stubidp.outputs.cloudflare-worker }}"
+          fi
 
   # Deprecated deployments
   deploy-nodejs-cloudflare-pages:
@@ -110,7 +134,23 @@ jobs:
       - name: Install dependencies 👨🏻‍💻
         run: npm ci
 
+      - name: Resolve stubIdP client id
+        id: stubidp
+        run: |
+          key=$(basename "${{ matrix.workingDirectory }}")
+          prefix=$(jq -r --arg key "$key" '.[] | select(.key == $key) | .secretPrefix // empty' "$GITHUB_WORKSPACE/.github/stubidp/clients.json")
+          echo "secret-prefix=$prefix" >> "$GITHUB_OUTPUT"
+
+      - name: Inject stubIdP client id into Angular environment
+        if: matrix.workingDirectory == './examples/angular-spa'
+        env:
+          CLIENT_ID: ${{ secrets[format('STUBIDP_{0}_CLIENT_ID', steps.stubidp.outputs.secret-prefix)] }}
+        run: |
+          sed -i "s#clientId: '[^']*'#clientId: '${CLIENT_ID}'#" src/environments/environment.ts
+
       - name: Run build
+        env:
+          VITE_OIDC_CLIENT_ID: ${{ secrets[format('STUBIDP_{0}_CLIENT_ID', steps.stubidp.outputs.secret-prefix)] }}
         run: npm run pages:build
 
       - name: Publish
@@ -121,3 +161,18 @@ jobs:
           workingDirectory: ${{ matrix.workingDirectory }}
           command: pages deploy ${{ matrix.directory }} --project-name=${{ matrix.projectName }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push client credentials to Cloudflare Pages
+        if: matrix.workingDirectory == './examples/nextjs-app'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLIENT_ID: ${{ secrets[format('STUBIDP_{0}_CLIENT_ID', steps.stubidp.outputs.secret-prefix)] }}
+          CLIENT_SECRET: ${{ secrets[format('STUBIDP_{0}_CLIENT_SECRET', steps.stubidp.outputs.secret-prefix)] }}
+        run: |
+          printf '%s' "$CLIENT_ID" | \
+            npx wrangler pages secret put AUTH_CLIENT_ID --project-name="${{ matrix.projectName }}"
+          if [ -n "$CLIENT_SECRET" ]; then
+            printf '%s' "$CLIENT_SECRET" | \
+              npx wrangler pages secret put AUTH_CLIENT_SECRET --project-name="${{ matrix.projectName }}"
+          fi
