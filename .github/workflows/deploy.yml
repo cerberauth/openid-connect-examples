@@ -1,4 +1,4 @@
-name: Publish
+name: Deploy
 
 on:
   push:
@@ -88,6 +88,70 @@ jobs:
             printf '%s' "$CLIENT_SECRET" | \
               npx wrangler secret put AUTH_CLIENT_SECRET --name "${{ steps.stubidp.outputs.cloudflare-worker }}"
           fi
+
+  list-vercel-examples:
+    runs-on: ubuntu-slim
+
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: set-matrix
+        uses: ./.github/actions/list-examples
+        with:
+          marker-file: vercel.json
+
+  deploy-vercel:
+    needs: list-vercel-examples
+    name: Deploy ${{ matrix.workingDirectory }} to Vercel
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ matrix.workingDirectory }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        workingDirectory: ${{ fromJson(needs.list-vercel-examples.outputs.matrix) }}
+
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v7
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Resolve stubIdP client config
+        id: stubidp
+        run: |
+          key=$(basename "${{ matrix.workingDirectory }}")
+          config=$(jq -c --arg key "$key" '.[] | select(.key == $key)' "$GITHUB_WORKSPACE/.github/stubidp/clients.json")
+          echo "vercel-project=$(jq -r '.vercelProject // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
+
+      - name: Link Vercel project
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          args=(--yes --token="$VERCEL_TOKEN" --project="${{ steps.stubidp.outputs.vercel-project }}")
+          if [ -n "${{ secrets.VERCEL_TEAM_ID }}" ]; then
+            args+=(--scope="${{ secrets.VERCEL_TEAM_ID }}")
+          fi
+          npx vercel link "${args[@]}"
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: npx vercel deploy --prod --token="$VERCEL_TOKEN"
 
   # Deprecated deployments
   deploy-nodejs-cloudflare-pages:
