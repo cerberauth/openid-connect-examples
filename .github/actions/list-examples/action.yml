@@ -9,6 +9,10 @@ inputs:
     description: "'path' to output example directory paths (./examples/foo), 'name' to output just directory basenames (foo)"
     required: false
     default: path
+  exclude:
+    description: Comma-separated list of example directory basenames to exclude (e.g. nextjs-app)
+    required: false
+    default: ''
 
 outputs:
   matrix:
@@ -22,6 +26,14 @@ runs:
       shell: bash
       run: |
         matches=$(find ./examples -maxdepth 2 -type f -name "${{ inputs.marker-file }}" -exec dirname {} \; | sort -u)
+        if [ -n "${{ inputs.exclude }}" ]; then
+          matches=$(echo "$matches" | while IFS= read -r m; do
+            base=$(basename "$m")
+            if ! echo ",${{ inputs.exclude }}," | grep -q ",$base,"; then
+              echo "$m"
+            fi
+          done)
+        fi
         if [ "${{ inputs.format }}" = "name" ]; then
           matches=$(echo "$matches" | xargs -r -I{} basename {})
         fi

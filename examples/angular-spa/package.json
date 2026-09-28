@@ -7,7 +7,8 @@
     "build": "ng build",
     "pages:build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "deploy": "ng build --configuration production && wrangler deploy"
   },
   "private": true,
   "dependencies": {
@@ -40,6 +41,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
-    "typescript": "~5.4.2"
+    "typescript": "~5.4.2",
+    "wrangler": "^4.46.0"
   }
 }

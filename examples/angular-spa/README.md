@@ -6,7 +6,7 @@ Disclaimer: This project is for educational purposes only and should not be used
 
 ## Deployment
 
-This project is deployed on [Cloudflare Pages](https://cerberauth-angular-spa-oidc.pages.dev/) and on [Vercel](https://cerberauth-angular-spa-oidc.vercel.app/).
+This project is deployed on [Cloudflare Workers](https://angular-spa-oidc.cerberauth.workers.dev/) and on [Vercel](https://cerberauth-angular-spa-oidc.vercel.app/).
 
 ## Deploy your own
 

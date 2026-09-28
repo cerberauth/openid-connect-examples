@@ -1,10 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-start-app-oidc",
-  "main": "@tanstack/react-start/server-entry",
+  "name": "vue-spa-oidc",
   "compatibility_date": "2025-11-09",
-  "compatibility_flags": ["nodejs_compat"],
   "assets": {
+    "directory": "dist",
     "not_found_handling": "single-page-application"
   },
   "observability": {
