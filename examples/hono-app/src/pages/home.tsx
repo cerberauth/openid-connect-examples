@@ -49,7 +49,7 @@ export const HomePage = ({ user }: Props) => {
                   className={buttonClassName}
                   href="/auth/login"
                 >
-                  Login with TestID
+                  Login with StubIdP
                 </a>
               )}
             </div>
