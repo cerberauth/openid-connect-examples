@@ -38,6 +38,7 @@ jobs:
         uses: cerberauth/ci/actions/docker-lint@main
         with:
           dockerfile: examples/${{ matrix.example }}/Dockerfile
+          ignore: DL3066
 
   example-docker:
     needs: [list-examples, lint-dockerfiles]

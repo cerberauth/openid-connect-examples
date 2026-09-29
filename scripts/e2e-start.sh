@@ -10,7 +10,7 @@ if [ $# -eq 0 ]; then
   echo "==> Starting all apps via docker-compose..."
   docker compose -f "$COMPOSE_FILE" up --build -d
 
-  for port in 4001 4002 4003 4004 4005 4006; do
+  for port in 4001 4002 4003 4004 4005 4006 4007; do
     echo "==> Waiting for app on port $port..."
     timeout 120 sh -c "until curl -sf http://localhost:$port > /dev/null; do sleep 2; done"
     echo "    port $port ready."
@@ -24,7 +24,7 @@ if [ $# -eq 0 ]; then
   exit $?
 fi
 
-APP="${1:?app name required (angular-spa|react-spa|vue-spa|nextjs-app|hono-app|tanstack-start-app)}"
+APP="${1:?app name required (angular-spa|react-spa|vue-spa|nextjs-app|hono-app|tanstack-start-app|nuxt-app)}"
 PORT="${2:?port required}"
 OIDC_ISSUER="${3:-}"
 OIDC_CLIENT_ID="${4:-}"
@@ -69,6 +69,12 @@ case "$APP" in
     POST_LOGOUT_REDIRECT_URI="http://localhost:$PORT"
     STUBIDP_PORT=8486
     PUBLIC_CLIENT=true
+    ;;
+  nuxt-app)
+    REDIRECT_URI="http://localhost:$PORT/auth/oidc"
+    POST_LOGOUT_REDIRECT_URI="http://localhost:$PORT"
+    STUBIDP_PORT=8487
+    PUBLIC_CLIENT=false
     ;;
   *)
     echo "Unknown app: $APP" >&2
@@ -136,7 +142,7 @@ case "$APP" in
       -t e2e-app \
       "$REPO_ROOT/examples/$APP"
     ;;
-  nextjs-app)
+  nextjs-app|nuxt-app)
     docker build -t e2e-app "$REPO_ROOT/examples/$APP"
     ;;
   hono-app)
@@ -175,6 +181,18 @@ case "$APP" in
       -e AUTH_CLIENT_SECRET="$OIDC_CLIENT_SECRET" \
       -e AUTH_REDIRECT_URI="$REDIRECT_URI" \
       -e AUTH_POST_LOGOUT_REDIRECT_URI="$POST_LOGOUT_REDIRECT_URI" \
+      e2e-app
+    ;;
+  nuxt-app)
+    docker run -d \
+      --name e2e-app-container \
+      --network host \
+      -e PORT="$PORT" \
+      -e NUXT_SESSION_PASSWORD=e2e-nuxt-session-password-32chars!! \
+      -e NUXT_OAUTH_OIDC_CLIENT_ID="$OIDC_CLIENT_ID" \
+      -e NUXT_OAUTH_OIDC_CLIENT_SECRET="$OIDC_CLIENT_SECRET" \
+      -e NUXT_OAUTH_OIDC_OPENID_CONFIG="$OIDC_ISSUER/.well-known/openid-configuration" \
+      -e NUXT_OAUTH_OIDC_REDIRECT_URL="$REDIRECT_URI" \
       e2e-app
     ;;
 esac

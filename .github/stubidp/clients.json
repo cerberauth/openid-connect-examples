@@ -83,6 +83,27 @@
     "vercelProject": "cerberauth-nextjs-app-oidc"
   },
   {
+    "key": "nuxt-app",
+    "secretPrefix": "NUXT_APP",
+    "clientName": "nuxt-app (openid-connect-examples)",
+    "public": false,
+    "redirectUris": [
+      "https://nuxt-app-oidc.cerberauth.workers.dev/auth/oidc",
+      "https://cerberauth-nuxt-app-oidc.vercel.app/auth/oidc"
+    ],
+    "postLogoutRedirectUris": [
+      "https://nuxt-app-oidc.cerberauth.workers.dev",
+      "https://cerberauth-nuxt-app-oidc.vercel.app"
+    ],
+    "cloudflareWorker": "nuxt-app-oidc",
+    "cloudflareClientIdEnvVar": "NUXT_OAUTH_OIDC_CLIENT_ID",
+    "cloudflareClientSecretEnvVar": "NUXT_OAUTH_OIDC_CLIENT_SECRET",
+    "nitroPreset": "cloudflare_module",
+    "vercelProject": "cerberauth-nuxt-app-oidc",
+    "vercelClientIdEnvVar": "NUXT_OAUTH_OIDC_CLIENT_ID",
+    "vercelClientSecretEnvVar": "NUXT_OAUTH_OIDC_CLIENT_SECRET"
+  },
+  {
     "key": "hono-app",
     "secretPrefix": "HONO_APP",
     "clientName": "hono-app (openid-connect-examples)",

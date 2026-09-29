@@ -61,10 +61,14 @@ jobs:
           config=$(jq -c --arg key "$key" '.[] | select(.key == $key)' "$GITHUB_WORKSPACE/.github/stubidp/clients.json")
           echo "secret-prefix=$(jq -r '.secretPrefix // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
           echo "cloudflare-worker=$(jq -r '.cloudflareWorker // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
+          echo "client-id-env-var=$(jq -r '.cloudflareClientIdEnvVar // "AUTH_CLIENT_ID"' <<< "$config")" >> "$GITHUB_OUTPUT"
+          echo "client-secret-env-var=$(jq -r '.cloudflareClientSecretEnvVar // "AUTH_CLIENT_SECRET"' <<< "$config")" >> "$GITHUB_OUTPUT"
+          echo "nitro-preset=$(jq -r '.nitroPreset // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
 
       - name: Run build
         env:
           VITE_OIDC_CLIENT_ID: ${{ secrets[format('STUBIDP_{0}_CLIENT_ID', steps.stubidp.outputs.secret-prefix)] }}
+          NITRO_PRESET: ${{ steps.stubidp.outputs.nitro-preset }}
         run: npm run build
 
       - uses: cloudflare/wrangler-action@v4
@@ -82,12 +86,14 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLIENT_ID: ${{ secrets[format('STUBIDP_{0}_CLIENT_ID', steps.stubidp.outputs.secret-prefix)] }}
           CLIENT_SECRET: ${{ secrets[format('STUBIDP_{0}_CLIENT_SECRET', steps.stubidp.outputs.secret-prefix)] }}
+          CLIENT_ID_ENV_VAR: ${{ steps.stubidp.outputs.client-id-env-var }}
+          CLIENT_SECRET_ENV_VAR: ${{ steps.stubidp.outputs.client-secret-env-var }}
         run: |
           printf '%s' "$CLIENT_ID" | \
-            npx wrangler secret put AUTH_CLIENT_ID --name "${{ steps.stubidp.outputs.cloudflare-worker }}"
+            npx wrangler secret put "$CLIENT_ID_ENV_VAR" --name "${{ steps.stubidp.outputs.cloudflare-worker }}"
           if [ -n "$CLIENT_SECRET" ]; then
             printf '%s' "$CLIENT_SECRET" | \
-              npx wrangler secret put AUTH_CLIENT_SECRET --name "${{ steps.stubidp.outputs.cloudflare-worker }}"
+              npx wrangler secret put "$CLIENT_SECRET_ENV_VAR" --name "${{ steps.stubidp.outputs.cloudflare-worker }}"
           fi
 
   list-vercel-examples:
