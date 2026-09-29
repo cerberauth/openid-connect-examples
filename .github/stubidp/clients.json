@@ -21,10 +21,12 @@
     "clientName": "vue-spa (openid-connect-examples)",
     "public": true,
     "redirectUris": [
+      "https://vue-spa-oidc.cerberauth.workers.dev",
       "https://cerberauth-vue-spa-oidc.pages.dev",
       "https://cerberauth-vue-spa-oidc.vercel.app"
     ],
     "postLogoutRedirectUris": [
+      "https://vue-spa-oidc.cerberauth.workers.dev",
       "https://cerberauth-vue-spa-oidc.pages.dev",
       "https://cerberauth-vue-spa-oidc.vercel.app"
     ],
@@ -37,10 +39,12 @@
     "clientName": "angular-spa (openid-connect-examples)",
     "public": true,
     "redirectUris": [
+      "https://angular-spa-oidc.cerberauth.workers.dev/index.html",
       "https://cerberauth-angular-spa-oidc.pages.dev/index.html",
       "https://cerberauth-angular-spa-oidc.vercel.app/index.html"
     ],
     "postLogoutRedirectUris": [
+      "https://angular-spa-oidc.cerberauth.workers.dev/index.html",
       "https://cerberauth-angular-spa-oidc.pages.dev/index.html",
       "https://cerberauth-angular-spa-oidc.vercel.app/index.html"
     ],

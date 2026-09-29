@@ -27,7 +27,7 @@ function Home() {
               </Button>
             ) : (
               <Button data-testid="login-button" onClick={() => login()}>
-                Login with TestID
+                Login with StubIdP
               </Button>
             )}
           </CardContent>

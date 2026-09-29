@@ -25,7 +25,7 @@ export default function Home() {
               </Button>
             ) : (
               <Button data-testid="login-button" onClick={() => signIn('stubidp')}>
-                Login with stubIdP
+                Login with StubIdP
               </Button>
             )}
           </CardContent>

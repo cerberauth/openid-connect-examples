@@ -19,6 +19,7 @@ jobs:
         uses: ./.github/actions/list-examples
         with:
           marker-file: wrangler.jsonc
+          exclude: nextjs-app
 
   deploy-nodejs-cloudflare-workers:
     needs: list-wrangler-examples

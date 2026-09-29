@@ -19,7 +19,7 @@ const { isAuthenticated, login, logout } = useAuth()
           Logout
         </button>
         <button data-testid="login-button" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium h-10 px-4 py-2 bg-primary text-primary-fg hover:bg-primary/90" v-else @click="login">
-          Login with TestID
+          Login with StubIdP
         </button>
       </div>
       <p class="mt-4 max-w-lg text-on-surface-variant">
