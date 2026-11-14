@@ -1,4 +1,4 @@
-FROM node:jod AS builder
+FROM node:26 AS builder
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY . .
 
 RUN npm run build
 
-FROM node:jod-alpine
+FROM node:26-alpine
 
 WORKDIR /app
 

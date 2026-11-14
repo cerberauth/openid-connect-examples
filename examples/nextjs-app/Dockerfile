@@ -1,4 +1,4 @@
-FROM node:jod AS builder
+FROM node:26 AS builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ ENV NEXT_BUILD_OUTPUT 'standalone'
 
 RUN npm run build
 
-FROM node:jod-alpine
+FROM node:26-alpine
 
 WORKDIR /app
 

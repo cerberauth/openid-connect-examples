@@ -1,6 +1,6 @@
 # Documentation: https://hono.dev/docs/getting-started/nodejs#dockerfile
 
-FROM node:lts-slim AS base
+FROM node:26-slim AS base
 
 FROM base AS builder
 
