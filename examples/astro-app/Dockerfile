@@ -1,4 +1,4 @@
-FROM node:jod AS builder
+FROM node:26 AS builder
 
 WORKDIR /app
 
