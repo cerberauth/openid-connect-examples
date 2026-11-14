@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+const { user } = Astro.locals
+
+const buttonClass =
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium h-10 px-4 py-2 bg-primary text-primary-fg hover:bg-primary/90'
+---
+
+<Layout title="Astro SSR with OpenID Connect">
+  <h1 class="mt-4 text-2xl font-extrabold tracking-tight text-fg sm:text-5xl xl:max-w-[43.5rem]">
+    Astro SSR Example using OpenID Connect
+  </h1>
+  <div
+    class="max-w-lg rounded-lg border border-border bg-card p-6 shadow-sm flex flex-col items-center space-y-8 text-center"
+  >
+    <p class="text-lg text-on-surface-variant">
+      This example demonstrates how to authenticate users in an Astro application rendered on demand, using OpenID
+      Connect Protocol, Better Auth and an Astro middleware.
+    </p>
+    {
+      user ? (
+        <>
+          <p class="text-on-surface-variant">
+            Signed in as <span data-testid="user-email">{user.email ?? user.name}</span>
+          </p>
+          <div class="flex gap-4">
+            <a href="/profile" class={buttonClass}>
+              Profile
+            </a>
+            <button id="logout-button" data-testid="logout-button" class={buttonClass}>
+              Logout
+            </button>
+          </div>
+        </>
+      ) : (
+        <button id="login-button" data-testid="login-button" class={buttonClass}>
+          Login with StubIdP
+        </button>
+      )
+    }
+  </div>
+  <p class="mt-4 max-w-lg text-on-surface-variant">
+    If you want to checkout out how to implement OpenID Connect in your Astro application, take a look at the <a
+      class="text-primary"
+      href="https://github.com/cerberauth/openid-connect-examples/tree/main/examples/astro-with-middleware">source code</a
+    >.
+  </p>
+</Layout>
+
+<script>
+  import { authClient } from '../lib/auth-client'
+
+  document.getElementById('login-button')?.addEventListener('click', () => {
+    authClient.signIn.social({ provider: 'stubidp', callbackURL: '/' })
+  })
+
+  document.getElementById('logout-button')?.addEventListener('click', async () => {
+    const { data } = await authClient.signOut({ callbackURL: '/' })
+    // End the session at the OpenID Connect provider too, when it supports it.
+    window.location.assign(data?.redirect && data.url ? data.url : '/')
+  })
+</script>

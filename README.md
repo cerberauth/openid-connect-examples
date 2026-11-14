@@ -7,6 +7,8 @@ You can use the examples as a starting point for your own project or as a refere
 ## Examples
 
 - [Angular SPA](./examples/angular-spa/README.md)
+- [Astro SSG](./examples/astro-app/README.md)
+- [Astro SSR](./examples/astro-with-middleware/README.md)
 - [Next.js Application](./examples/nextjs-app/README.md)
 - [Nuxt Application](./examples/nuxt-app/README.md)
 - [React SPA](./examples/react-spa/README.md)

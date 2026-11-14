@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "astro-app-oidc",
+  "compatibility_date": "2025-11-09",
+  "assets": {
+    "directory": "dist"
+  },
+  "observability": {
+    "enabled": false
+  }
+}

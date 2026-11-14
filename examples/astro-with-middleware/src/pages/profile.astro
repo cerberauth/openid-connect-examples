@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro'
+
+// The middleware redirects anonymous visitors, so the user is always set here.
+const user = Astro.locals.user!
+---
+
+<Layout title="Profile">
+  <h1 class="mt-4 text-2xl font-extrabold tracking-tight text-fg sm:text-5xl xl:max-w-[43.5rem]">Profile</h1>
+  <div class="max-w-lg rounded-lg border border-border bg-card p-6 shadow-sm text-left space-y-4">
+    <p class="text-on-surface-variant">This page is protected by the Astro middleware.</p>
+    <dl class="text-on-surface-variant" data-testid="profile">
+      <dt class="font-medium text-fg">Name</dt>
+      <dd>{user.name || '-'}</dd>
+      <dt class="mt-2 font-medium text-fg">Email</dt>
+      <dd>{user.email || '-'}</dd>
+    </dl>
+    <a href="/" class="text-primary">Back to home</a>
+  </div>
+</Layout>

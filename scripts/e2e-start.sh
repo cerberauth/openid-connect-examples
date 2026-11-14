@@ -10,7 +10,7 @@ if [ $# -eq 0 ]; then
   echo "==> Starting all apps via docker-compose..."
   docker compose -f "$COMPOSE_FILE" up --build -d
 
-  for port in 4001 4002 4003 4004 4005 4006 4007; do
+  for port in 4001 4002 4003 4004 4005 4006 4007 4008 4009; do
     echo "==> Waiting for app on port $port..."
     timeout 120 sh -c "until curl -sf http://localhost:$port > /dev/null; do sleep 2; done"
     echo "    port $port ready."
@@ -24,7 +24,7 @@ if [ $# -eq 0 ]; then
   exit $?
 fi
 
-APP="${1:?app name required (angular-spa|react-spa|vue-spa|nextjs-app|hono-app|tanstack-start-app|nuxt-app)}"
+APP="${1:?app name required (angular-spa|react-spa|vue-spa|nextjs-app|hono-app|tanstack-start-app|nuxt-app|astro-app|astro-with-middleware)}"
 PORT="${2:?port required}"
 OIDC_ISSUER="${3:-}"
 OIDC_CLIENT_ID="${4:-}"
@@ -76,6 +76,21 @@ case "$APP" in
     STUBIDP_PORT=8487
     PUBLIC_CLIENT=false
     ;;
+  astro-app)
+    REDIRECT_URI="http://localhost:$PORT"
+    POST_LOGOUT_REDIRECT_URI="http://localhost:$PORT"
+    STUBIDP_PORT=8488
+    PUBLIC_CLIENT=true
+    ;;
+  astro-with-middleware)
+    REDIRECT_URI="http://localhost:$PORT/api/auth/callback/stubidp"
+    # Better Auth builds this with `new URL(...)`, which normalizes a bare
+    # origin to have a trailing slash, so StubIdP must be registered with
+    # that exact form.
+    POST_LOGOUT_REDIRECT_URI="http://localhost:$PORT/"
+    STUBIDP_PORT=8489
+    PUBLIC_CLIENT=false
+    ;;
   *)
     echo "Unknown app: $APP" >&2
     exit 1
@@ -123,7 +138,7 @@ case "$APP" in
       -t e2e-app \
       "$REPO_ROOT/examples/$APP"
     ;;
-  react-spa|vue-spa)
+  react-spa|vue-spa|astro-app)
     docker build \
       --build-arg VITE_OIDC_ISSUER="$OIDC_ISSUER" \
       --build-arg VITE_OIDC_CLIENT_ID="$OIDC_CLIENT_ID" \
@@ -142,7 +157,7 @@ case "$APP" in
       -t e2e-app \
       "$REPO_ROOT/examples/$APP"
     ;;
-  nextjs-app|nuxt-app)
+  nextjs-app|nuxt-app|astro-with-middleware)
     docker build -t e2e-app "$REPO_ROOT/examples/$APP"
     ;;
   hono-app)
@@ -152,7 +167,7 @@ esac
 
 echo "==> Starting $APP on port $PORT..."
 case "$APP" in
-  angular-spa|react-spa|vue-spa|tanstack-start-app)
+  angular-spa|react-spa|vue-spa|tanstack-start-app|astro-app)
     docker run -d \
       --name e2e-app-container \
       -p "$PORT:80" \
@@ -193,6 +208,18 @@ case "$APP" in
       -e NUXT_OAUTH_OIDC_CLIENT_SECRET="$OIDC_CLIENT_SECRET" \
       -e NUXT_OAUTH_OIDC_OPENID_CONFIG="$OIDC_ISSUER/.well-known/openid-configuration" \
       -e NUXT_OAUTH_OIDC_REDIRECT_URL="$REDIRECT_URI" \
+      e2e-app
+    ;;
+  astro-with-middleware)
+    docker run -d \
+      --name e2e-app-container \
+      --network host \
+      -e PORT="$PORT" \
+      -e BETTER_AUTH_SECRET=e2e-better-auth-secret-32-chars!!! \
+      -e BETTER_AUTH_URL="http://localhost:$PORT" \
+      -e AUTH_ISSUER="$OIDC_ISSUER" \
+      -e AUTH_CLIENT_ID="$OIDC_CLIENT_ID" \
+      -e AUTH_CLIENT_SECRET="$OIDC_CLIENT_SECRET" \
       e2e-app
     ;;
 esac

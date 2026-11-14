@@ -58,5 +58,21 @@ export default defineConfig({
         baseURL: 'http://localhost:4007',
       },
     },
+
+    {
+      name: 'astro-app',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:4008',
+      },
+    },
+
+    {
+      name: 'astro-with-middleware',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:4009',
+      },
+    },
   ],
 })

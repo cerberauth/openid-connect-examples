@@ -1,0 +1,25 @@
+{
+  "name": "astro-app",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "@cerberauth/tokens": "^0.3.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.5",
+    "oauth4webapi": "^3.8.8",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.144.0"
+  }
+}

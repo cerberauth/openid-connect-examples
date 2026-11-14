@@ -64,11 +64,13 @@ jobs:
           echo "client-id-env-var=$(jq -r '.cloudflareClientIdEnvVar // "AUTH_CLIENT_ID"' <<< "$config")" >> "$GITHUB_OUTPUT"
           echo "client-secret-env-var=$(jq -r '.cloudflareClientSecretEnvVar // "AUTH_CLIENT_SECRET"' <<< "$config")" >> "$GITHUB_OUTPUT"
           echo "nitro-preset=$(jq -r '.nitroPreset // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
+          echo "astro-adapter=$(jq -r '.astroAdapter // empty' <<< "$config")" >> "$GITHUB_OUTPUT"
 
       - name: Run build
         env:
           VITE_OIDC_CLIENT_ID: ${{ secrets[format('STUBIDP_{0}_CLIENT_ID', steps.stubidp.outputs.secret-prefix)] }}
           NITRO_PRESET: ${{ steps.stubidp.outputs.nitro-preset }}
+          ASTRO_ADAPTER: ${{ steps.stubidp.outputs.astro-adapter }}
         run: npm run build
 
       - uses: cloudflare/wrangler-action@v4

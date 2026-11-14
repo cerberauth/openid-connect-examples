@@ -104,6 +104,41 @@
     "vercelClientSecretEnvVar": "NUXT_OAUTH_OIDC_CLIENT_SECRET"
   },
   {
+    "key": "astro-app",
+    "secretPrefix": "ASTRO_APP",
+    "clientName": "astro-app (openid-connect-examples)",
+    "public": true,
+    "redirectUris": [
+      "https://astro-app-oidc.cerberauth.workers.dev",
+      "https://cerberauth-astro-app-oidc.vercel.app"
+    ],
+    "postLogoutRedirectUris": [
+      "https://astro-app-oidc.cerberauth.workers.dev",
+      "https://cerberauth-astro-app-oidc.vercel.app"
+    ],
+    "vercelProject": "cerberauth-astro-app-oidc",
+    "vercelClientIdEnvVar": "VITE_OIDC_CLIENT_ID"
+  },
+  {
+    "key": "astro-with-middleware",
+    "secretPrefix": "ASTRO_WITH_MIDDLEWARE",
+    "clientName": "astro-with-middleware (openid-connect-examples)",
+    "public": false,
+    "redirectUris": [
+      "https://astro-with-middleware-oidc.cerberauth.workers.dev/api/auth/callback/stubidp",
+      "https://cerberauth-astro-with-middleware-oidc.vercel.app/api/auth/callback/stubidp"
+    ],
+    "postLogoutRedirectUris": [
+      "https://astro-with-middleware-oidc.cerberauth.workers.dev/",
+      "https://cerberauth-astro-with-middleware-oidc.vercel.app/"
+    ],
+    "cloudflareWorker": "astro-with-middleware-oidc",
+    "astroAdapter": "cloudflare",
+    "vercelProject": "cerberauth-astro-with-middleware-oidc",
+    "vercelClientIdEnvVar": "AUTH_CLIENT_ID",
+    "vercelClientSecretEnvVar": "AUTH_CLIENT_SECRET"
+  },
+  {
     "key": "hono-app",
     "secretPrefix": "HONO_APP",
     "clientName": "hono-app (openid-connect-examples)",

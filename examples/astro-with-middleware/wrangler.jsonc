@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "astro-with-middleware-oidc",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2025-11-09",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "vars": {
+    "BETTER_AUTH_URL": "https://astro-with-middleware-oidc.cerberauth.workers.dev",
+    "AUTH_ISSUER": "https://stubidp.cerberauth.com"
+  },
+  "observability": {
+    "enabled": false
+  }
+}
