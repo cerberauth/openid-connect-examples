@@ -4,7 +4,7 @@ name: openid-connect-e2e
 # Run single app:     docker compose -f docker-compose.e2e.yml up --build -d stubidp-react react-spa
 # Teardown:           docker compose -f docker-compose.e2e.yml down
 #
-# Note: nextjs-app, hono-app, and nuxt-app use network_mode: host (Linux only).
+# Note: nextjs-app, hono-app, nuxt-app, and astro-with-middleware use network_mode: host (Linux only).
 # On macOS/Windows Docker Desktop, those apps may not work correctly.
 
 services:
@@ -245,4 +245,71 @@ services:
       NUXT_OAUTH_OIDC_REDIRECT_URL: http://localhost:4007/auth/oidc
     depends_on:
       stubidp-nuxt:
+        condition: service_healthy
+
+  stubidp-astro-app:
+    image: ghcr.io/cerberauth/stubidp:latest
+    command: []
+    environment:
+      STUBIDP_PORT: "8488"
+      STUBIDP_CLIENT_ID: e2e-test-client
+      STUBIDP_PUBLIC_CLIENT: "true"
+      STUBIDP_SKIP_PROMPT: "true"
+      STUBIDP_REDIRECT_URI: http://localhost:4008
+      STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4008
+      STUBIDP_RATE_LIMIT_DISABLED: "true"
+      STUBIDP_DEFAULT_USER: '{"sub":"e2e-user","email":"e2e@example.com","name":"E2E User"}'
+    ports:
+      - "8488:8488"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8488/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  astro-app:
+    build:
+      context: ./examples/astro-app
+      args:
+        VITE_OIDC_ISSUER: http://localhost:8488
+        VITE_OIDC_CLIENT_ID: e2e-test-client
+    ports:
+      - "4008:80"
+    depends_on:
+      stubidp-astro-app:
+        condition: service_healthy
+
+  # Uses network_mode: host so the container can reach stubidp on localhost:8489.
+  stubidp-astro-with-middleware:
+    image: ghcr.io/cerberauth/stubidp:latest
+    command: []
+    environment:
+      STUBIDP_PORT: "8489"
+      STUBIDP_CLIENT_ID: e2e-test-client
+      STUBIDP_CLIENT_SECRET: e2e-test-secret
+      STUBIDP_SKIP_PROMPT: "true"
+      STUBIDP_REDIRECT_URI: http://localhost:4009/api/auth/callback/stubidp
+      STUBIDP_POST_LOGOUT_REDIRECT_URI: http://localhost:4009/
+      STUBIDP_RATE_LIMIT_DISABLED: "true"
+    ports:
+      - "8489:8489"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8489/.well-known/openid-configuration', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  astro-with-middleware:
+    build:
+      context: ./examples/astro-with-middleware
+    network_mode: host
+    environment:
+      PORT: "4009"
+      BETTER_AUTH_SECRET: "e2e-better-auth-secret-32-chars!!!"
+      BETTER_AUTH_URL: http://localhost:4009
+      AUTH_ISSUER: http://localhost:8489
+      AUTH_CLIENT_ID: e2e-test-client
+      AUTH_CLIENT_SECRET: e2e-test-secret
+    depends_on:
+      stubidp-astro-with-middleware:
         condition: service_healthy

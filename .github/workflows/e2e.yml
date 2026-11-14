@@ -56,6 +56,20 @@ jobs:
             stubidp-port: 8487
             redirect-uri: http://localhost:4007/auth/oidc
             post-logout-redirect-uri: http://localhost:4007
+          - app: astro-app
+            port: 4008
+            stubidp-port: 8488
+            redirect-uri: http://localhost:4008
+            post-logout-redirect-uri: http://localhost:4008
+            public-client: 'true'
+          - app: astro-with-middleware
+            port: 4009
+            stubidp-port: 8489
+            redirect-uri: http://localhost:4009/api/auth/callback/stubidp
+            # Better Auth builds this with `new URL(...)`, which normalizes a
+            # bare origin to have a trailing slash, so StubIdP must be
+            # registered with that exact form.
+            post-logout-redirect-uri: http://localhost:4009/
 
     steps:
       - uses: actions/checkout@v7

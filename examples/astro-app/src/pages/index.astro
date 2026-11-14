@@ -1,0 +1,82 @@
+---
+import '../styles/global.css'
+
+const buttonClass =
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium h-10 px-4 py-2 bg-primary text-primary-fg hover:bg-primary/90'
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Astro SSG with OpenID Connect</title>
+  </head>
+  <body>
+    <div class="bg-surface min-h-screen">
+      <main
+        role="main"
+        class="flex flex-col items-center justify-center h-5/6 space-y-8 text-center px-4 py-16 lg:pt-32 md:pt-16 sm:pt-8"
+      >
+        <h1 class="mt-4 text-2xl font-extrabold tracking-tight text-fg sm:text-5xl xl:max-w-[43.5rem]">
+          Astro Static Site Example using OpenID Connect
+        </h1>
+        <div
+          class="max-w-lg rounded-lg border border-border bg-card p-6 shadow-sm flex flex-col items-center space-y-8 text-center"
+        >
+          <p class="text-lg text-on-surface-variant">
+            This example demonstrates how to authenticate users in a statically generated Astro site using OpenID
+            Connect Protocol.
+          </p>
+          <p id="user" class="text-on-surface-variant" hidden></p>
+          <p id="error" class="text-red-600" hidden></p>
+          <button id="logout-button" data-testid="logout-button" class={buttonClass} hidden>Logout</button>
+          <button id="login-button" data-testid="login-button" class={buttonClass} hidden>
+            Login with StubIdP
+          </button>
+        </div>
+        <p class="mt-4 max-w-lg text-on-surface-variant">
+          If you want to checkout out how to implement OpenID Connect in your Astro site, take a look at the <a
+            class="text-primary"
+            href="https://github.com/cerberauth/openid-connect-examples/tree/main/examples/astro-app">source code</a
+          >.
+        </p>
+      </main>
+
+      <footer class="text-center py-4">
+        <p class="text-sm text-on-surface-variant">
+          Proudly part of <a class="text-primary" href="https://www.cerberauth.com">CerberAuth</a> community.
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      import { handleLoginRedirect, login, logout } from '../lib/oidc'
+
+      const loginButton = document.getElementById('login-button')!
+      const logoutButton = document.getElementById('logout-button')!
+      const userElement = document.getElementById('user')!
+      const errorElement = document.getElementById('error')!
+
+      loginButton.addEventListener('click', () => login())
+      logoutButton.addEventListener('click', () => logout())
+
+      // The page is static: the authentication state only exists in the browser,
+      // so it is resolved on load, after the authorization server redirects back.
+      try {
+        const claims = await handleLoginRedirect()
+        if (claims) {
+          userElement.textContent = String(claims.email ?? claims.sub)
+          userElement.hidden = false
+          logoutButton.hidden = false
+        } else {
+          loginButton.hidden = false
+        }
+      } catch (error) {
+        errorElement.textContent = error instanceof Error ? error.message : 'Authentication failed'
+        errorElement.hidden = false
+        loginButton.hidden = false
+      }
+    </script>
+  </body>
+</html>
